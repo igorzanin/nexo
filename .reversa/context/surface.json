@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-05-12T00:00:00Z",
+  "project_root": "C:\\Users\\Gustavo\\VSCode Projects\\nexo",
+  "languages": [
+    { "name": "TypeScript", "extensions": [".ts", ".tsx"], "file_count": 547 },
+    { "name": "Go", "extensions": [".go"], "file_count": 267 },
+    { "name": "SCSS", "extensions": [".scss"], "file_count": 175 },
+    { "name": "Markdown", "extensions": [".md"], "file_count": 132 },
+    { "name": "SQL", "extensions": [".sql"], "file_count": 98 },
+    { "name": "HTML", "extensions": [".html"], "file_count": 58 },
+    { "name": "Swift", "extensions": [".swift"], "file_count": 10 },
+    { "name": "C#", "extensions": [".cs"], "file_count": 7 },
+    { "name": "JavaScript", "extensions": [".js"], "file_count": 9 }
+  ],
+  "primary_language": "TypeScript",
+  "frameworks": [
+    { "name": "React", "version": "17.0.2", "source": "webapp/package.json" },
+    { "name": "Redux Toolkit", "version": "^1.8.0", "source": "webapp/package.json" },
+    { "name": "React Router", "version": "^5.2.0", "source": "webapp/package.json" },
+    { "name": "Webpack", "version": "^5.70.0", "source": "webapp/package.json" },
+    { "name": "Go", "version": "1.21", "source": "server/go.mod" },
+    { "name": "gorilla/mux", "version": "v1.8.1", "source": "server/go.mod" },
+    { "name": "gorilla/websocket", "version": "v1.5.1", "source": "server/go.mod" },
+    { "name": "SQLite", "version": "v2.0.3", "source": "server/go.mod" },
+    { "name": "PostgreSQL", "version": "v1.10.9", "source": "server/go.mod" },
+    { "name": "MySQL", "version": "v1.8.1", "source": "server/go.mod" },
+    { "name": "Mattermost Morph", "version": "v1.1.0", "source": "server/go.mod" }
+  ],
+  "package_manager": "npm",
+  "entry_points": [
+    { "path": "webapp/src/main.tsx", "type": "app_entry" },
+    { "path": "webapp/src/app.tsx", "type": "app_component" },
+    { "path": "server/main/main.go", "type": "server_entry" },
+    { "path": "linux/main.go", "type": "linux_entry" },
+    { "path": "mac/Focalboard/AppDelegate.swift", "type": "mac_entry" },
+    { "path": "win-wpf/Focalboard/App.xaml.cs", "type": "win_entry" }
+  ],
+  "config_files": [
+    "config.json", "server-config.json", "app-config.json",
+    "webapp/tsconfig.json", "webapp/webpack.common.js",
+    "server/.golangci.yml",
+    ".editorconfig", ".dockerignore"
+  ],
+  "ci_cd": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/lint-server.yml",
+    ".github/workflows/prod-release.yml",
+    ".github/workflows/dev-release.yml",
+    ".github/workflows/codeql-analysis.yml",
+    ".github/workflows/scorecards-analysis.yml"
+  ],
+  "docker": {
+    "dockerfile": "docker/Dockerfile",
+    "build": "Dockerfile.build",
+    "compose": "docker/docker-compose.yml",
+    "compose_db_nginx": "docker/docker-compose-db-nginx.yml",
+    "testing_postgres": "docker-testing/docker-compose-postgres.yml",
+    "testing_mysql": "docker-testing/docker-compose-mysql.yml",
+    "testing_mariadb": "docker-testing/docker-compose-mariadb.yml"
+  },
+  "database_hints": [
+    { "path": "server/services/store/sqlstore/migrations/", "type": "migrations_dir" },
+    { "path": "server/services/store/sqlstore/migrations/000001_init.up.sql", "type": "init_schema" }
+  ],
+  "test_framework": "Jest",
+  "test_file_count": 266,
+  "modules": [
+    "server/api",
+    "server/app",
+    "server/model",
+    "server/services",
+    "server/ws",
+    "server/auth",
+    "server/web",
+    "webapp/src/components",
+    "webapp/src/store",
+    "webapp/src/pages",
+    "webapp/src/blocks",
+    "import/asana",
+    "import/jira",
+    "import/nextcloud-deck",
+    "import/notion",
+    "import/todoist",
+    "import/trello"
+  ],
+  "total_files": 1756,
+  "organization_suggestion": {
+    "granularity": "hybrid",
+    "rationale": "O servidor Go possui roteamento centralizado (gorilla/mux) enquanto a estrutura de diretórios do webapp e do servidor seguem organização modular por camada/domínio, indicando um modelo híbrido.",
+    "signals": [
+      { "type": "centralized_routing", "evidence": ["server/api/api.go", "server/server/initHandlers.go"] },
+      { "type": "top_level_domain_folders", "evidence": ["server/api/", "server/app/", "server/model/", "server/services/", "webapp/src/components/", "webapp/src/store/"] }
+    ],
+    "features": []
+  }
+}

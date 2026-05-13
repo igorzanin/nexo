@@ -1,0 +1,342 @@
+{
+  "generated_at": "2026-05-12T12:00:00Z",
+  "doc_level": "completo",
+  "modules": {
+    "webapp/src/components": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "TypeScript (React/TSX)",
+      "files": ["webapp/src/components/**/*.tsx"],
+      "submodules": [
+        "kanban", "table", "gallery", "calendar",
+        "cardDetail", "sidebar", "blocksEditor",
+        "calculations", "permissions", "onboardingTour",
+        "shareBoard", "searchDialog", "content",
+        "flashMessages"
+      ],
+      "entities": [
+        { "name": "Workspace", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "CenterPanel", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "CardDialog", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "WithWebSockets", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "Kanban", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "Table", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "Gallery", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "CalendarFullView", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "CardDetail", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "Sidebar", "type": "component", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "addCard — criação de card com properties que atendem filtros da view ativa",
+        "cardClicked — seleção múltipla com Shift/Cmd+Shift+Click",
+        "Duplicate cards via mutator.performAsUndoGroup (Ctrl+D)",
+        "WebSocket init com autenticação por token de sessão/read",
+        "Upload de attachment com progress tracking via XHR"
+      ]
+    },
+    "server/auth": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": ["server/auth/auth.go"],
+      "entities": [
+        { "name": "Auth", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "AuthInterface", "type": "interface", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "GetSession — validação de token com refresh automático se expirado",
+        "IsValidReadToken — validação de read token contra sharing público do board",
+        "DoesUserHaveTeamAccess — delegação para permissions.HasPermissionToTeam"
+      ]
+    },
+    "server/ws": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": [
+        "server/ws/adapter.go",
+        "server/ws/common.go",
+        "server/ws/server.go",
+        "server/ws/plugin_adapter.go",
+        "server/ws/plugin_adapter_client.go",
+        "server/ws/plugin_adapter_cluster.go"
+      ],
+      "entities": [
+        { "name": "Server", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "websocketSession", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "PluginAdapter", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "PluginAdapterClient", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "WebsocketCommand", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateBlockMsg", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateBoardMsg", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateMemberMsg", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateCategoryMessage", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateSubscription", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateClientConfig", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "UpdateCardLimitTimestamp", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "CategoryReorderMessage", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "CategoryBoardReorderMessage", "type": "struct", "confidence": "CONFIRMADO" },
+        { "name": "ClusterMessage", "type": "struct", "confidence": "CONFIRMADO" }
+      ],
+      "interfaces": [
+        { "name": "Store", "confidence": "CONFIRMADO" },
+        { "name": "Adapter", "confidence": "CONFIRMADO" },
+        { "name": "PluginAdapterInterface", "confidence": "CONFIRMADO" },
+        { "name": "servicesAPI", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "handleWebSocket — ciclo de vida de conexão WebSocket com upgrade, autenticação e inscrição",
+        "authenticateListener — validação de token (single user ou session)",
+        "isCommandReadTokenValid — validação de read token garantindo que todos os blocks pertencem ao mesmo board",
+        "BroadcastBlockChange — notificação seletiva: membros do board + inscritos nos blocks",
+        "sendBoardMessage — broadcast clusterizado via PluginAdapter",
+        "HandleClusterEvent — roteamento de eventos entre nós do cluster"
+      ]
+    },
+    "server/api": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": ["server/api/*.go"]
+    },
+    "server/app": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": ["server/app/*.go"]
+    },
+    "server/model": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": ["server/model/*.go"]
+    },
+    "server/services": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Go",
+      "files": ["server/services/*.go"]
+    },
+    "webapp/src/store": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "TypeScript (Redux Toolkit)",
+      "files": [
+        "webapp/src/store/index.ts",
+        "webapp/src/store/hooks.ts",
+        "webapp/src/store/boards.ts",
+        "webapp/src/store/cards.ts",
+        "webapp/src/store/views.ts",
+        "webapp/src/store/users.ts",
+        "webapp/src/store/teams.ts",
+        "webapp/src/store/contents.ts",
+        "webapp/src/store/comments.ts",
+        "webapp/src/store/attachments.ts",
+        "webapp/src/store/sidebar.ts",
+        "webapp/src/store/initialLoad.ts",
+        "webapp/src/store/*.ts"
+      ],
+      "entities": [
+        { "name": "RootState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "AppDispatch", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "CardsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "ViewsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "UsersStatus", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "TeamState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "ChannelState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "LimitsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "Sidebar", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "CategoryBoards", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "Category", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "CategoryBoardMetadata", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "ContentsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "CommentsState", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "AttachmentsState", "type": "type", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "sortCards — ordenação multi-critério com 8+ tipos de propriedade (card, date, person, select...)",
+        "searchFilterCards — busca textual em título + propriedades com lookup de options",
+        "updateMembersHandler — atualização de membros com permissões schemeAdmin/Editor/Viewer/Commenter",
+        "updateBoardCategories — redistribuição de boards entre categorias na sidebar",
+        "updateCategoryOrder — reordenação de categorias via Map de IDs",
+        "smartViewUpdate — preservação de referências de arrays inalterados",
+        "limitCard — limitação cloud (card fields parcial quando updateAt < limitTimestamp)",
+        "refreshCards — recarregamento de cards limitados expirados"
+      ]
+    },
+    "webapp/src/blocks": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "TypeScript",
+      "files": [
+        "webapp/src/blocks/block.ts",
+        "webapp/src/blocks/board.ts",
+        "webapp/src/blocks/boardView.ts",
+        "webapp/src/blocks/card.ts",
+        "webapp/src/blocks/commentBlock.ts",
+        "webapp/src/blocks/contentBlock.ts",
+        "webapp/src/blocks/attachmentBlock.tsx",
+        "webapp/src/blocks/checkboxBlock.ts",
+        "webapp/src/blocks/dividerBlock.ts",
+        "webapp/src/blocks/textBlock.ts",
+        "webapp/src/blocks/imageBlock.ts",
+        "webapp/src/blocks/h1Block.tsx",
+        "webapp/src/blocks/h2Block.tsx",
+        "webapp/src/blocks/h3Block.tsx",
+        "webapp/src/blocks/filterClause.ts",
+        "webapp/src/blocks/filterGroup.ts",
+        "webapp/src/blocks/sharing.ts",
+        "webapp/src/blocks/workspace.ts",
+        "webapp/src/blocks/team.ts"
+      ],
+      "entities": [
+        { "name": "Block", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "BlockPatch", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "Board", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardPatch", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardView", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardViewFields", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "Card", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "CardFields", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "CommentBlock", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "ContentBlock", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "AttachmentBlock", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardMember", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardGroup", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "BoardsAndBlocks", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "IPropertyTemplate", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "IPropertyOption", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "FilterGroup", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "FilterClause", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "ISortOption", "type": "type", "confidence": "CONFIRMADO" },
+        { "name": "FileInfo", "type": "interface", "confidence": "CONFIRMADO" }
+      ],
+      "interfaces": [],
+      "key_algorithms": [
+        "createCardPropertiesPatches — delta de propriedades com deep compare de options, com undo patch",
+        "createPatchesFromBoards — patch de board com delta de properties + cardProperties",
+        "createPatchesFromBlocks — patch de block com delta de fields",
+        "createPatchesFromBoardsAndBlocks — patch combinado board + blocks com undo",
+        "smartViewUpdate — deep compare com lodash/isEqual para preservar refs inalteradas",
+        "sortBoardViewsAlphabetically — ordenação removendo emojis do início do título",
+        "MemberRole cascade: Viewer → Commenter → Editor → Admin"
+      ]
+    },
+    "webapp/src/pages": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "TypeScript (React/TSX)",
+      "files": [
+        "webapp/src/pages/boardPage/boardPage.tsx",
+        "webapp/src/pages/loginPage.tsx",
+        "webapp/src/pages/registerPage.tsx",
+        "webapp/src/pages/changePasswordPage.tsx",
+        "webapp/src/pages/errorPage.tsx",
+        "webapp/src/pages/welcome/welcomePage.tsx",
+        "webapp/src/pages/boardPage/setWindowTitleAndIcon.tsx",
+        "webapp/src/pages/boardPage/teamToBoardAndViewRedirect.tsx",
+        "webapp/src/pages/boardPage/undoRedoHotKeys.tsx",
+        "webapp/src/pages/boardPage/websocketConnection.tsx",
+        "webapp/src/pages/boardPage/backwardCompatibilityQueryParamsRedirect.tsx"
+      ],
+      "entities": [
+        { "name": "BoardPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "LoginPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "RegisterPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "ChangePasswordPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "ErrorPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "WelcomePage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "WebsocketConnection", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "UndoRedoHotKeys", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "SetWindowTitleAndIcon", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "TeamToBoardAndViewRedirect", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "BackwardCompatibilityQueryParamsRedirect", "type": "component", "confidence": "CONFIRMADO" }
+      ]
+    },
+    "import": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "TypeScript (Node.js CLI)",
+      "files": [
+        "import/asana/importAsana.ts",
+        "import/jira/jiraImporter.ts",
+        "import/nextcloud-deck/importDeck.ts",
+        "import/notion/importNotion.ts",
+        "import/todoist/importTodoist.ts",
+        "import/trello/importTrello.ts",
+        "import/util/archive.ts"
+      ],
+      "entities": [
+        { "name": "ArchiveUtils", "type": "class", "confidence": "CONFIRMADO" },
+        { "name": "ArchiveHeader", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "BoardArchiveLine", "type": "interface", "confidence": "CONFIRMADO" },
+        { "name": "BlockArchiveLine", "type": "interface", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "Trello: lists → Select property, cards → cards, checklists → checkbox blocks",
+        "Jira: XML → Markdown (Turndown), issues → cards, projects → boards",
+        "Asana: JSON → Board, tasks → cards, sections → Select options",
+        "Todoist: 5 seções padrão, projects → Select, items → cards",
+        "Notion: CSV rows → cards + markdown files → text blocks",
+        "Nextcloud Deck: API REST interativa, stacks → Select, cards + comments",
+        "ArchiveUtils.buildBlockArchive: JSONL com header + boards + blocks"
+      ]
+    },
+    "desktop": {
+      "status": "analyzed",
+      "analyzed_at": "2026-05-12T00:00:00Z",
+      "language": "Swift / C# / Go",
+      "files": [
+        "linux/main.go",
+        "mac/Focalboard/AppDelegate.swift",
+        "mac/Focalboard/ViewController.swift",
+        "mac/Focalboard/PortUtils.swift",
+        "mac/Focalboard/CustomWKWebView.swift",
+        "win-wpf/Focalboard/App.xaml.cs",
+        "win-wpf/Focalboard/MainWindow.xaml.cs",
+        "win-wpf/Focalboard/Utils.cs",
+        "win-wpf/Focalboard/Webview2Installer.cs"
+      ],
+      "entities": [
+        { "name": "Linux Desktop", "type": "platform", "confidence": "CONFIRMADO" },
+        { "name": "macOS Desktop", "type": "platform", "confidence": "CONFIRMADO" },
+        { "name": "Windows Desktop (WPF)", "type": "platform", "confidence": "CONFIRMADO" }
+      ],
+      "key_algorithms": [
+        "getFreePort — encontra porta TCP livre",
+        "runServer — configura servidor Go com SQLite + single-user token",
+        "Single-user auth: token 'su-' + uuid gerado automaticamente",
+        "macOS: DownloadHandler para arquivos baixados via WKWebView"
+      ]
+    }
+  }
+}
+        "webapp/src/pages/boardPage/boardPage.tsx",
+        "webapp/src/pages/loginPage.tsx",
+        "webapp/src/pages/registerPage.tsx",
+        "webapp/src/pages/changePasswordPage.tsx",
+        "webapp/src/pages/errorPage.tsx",
+        "webapp/src/pages/welcome/welcomePage.tsx",
+        "webapp/src/pages/boardPage/setWindowTitleAndIcon.tsx",
+        "webapp/src/pages/boardPage/teamToBoardAndViewRedirect.tsx",
+        "webapp/src/pages/boardPage/undoRedoHotKeys.tsx",
+        "webapp/src/pages/boardPage/websocketConnection.tsx",
+        "webapp/src/pages/boardPage/backwardCompatibilityQueryParamsRedirect.tsx"
+      ],
+      "entities": [
+        { "name": "BoardPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "LoginPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "RegisterPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "ChangePasswordPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "ErrorPage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "WelcomePage", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "WebsocketConnection", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "UndoRedoHotKeys", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "SetWindowTitleAndIcon", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "TeamToBoardAndViewRedirect", "type": "component", "confidence": "CONFIRMADO" },
+        { "name": "BackwardCompatibilityQueryParamsRedirect", "type": "component", "confidence": "CONFIRMADO" }
+      ]
+    }
+  }
+}
