@@ -1,176 +1,196 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-import * as fs from 'fs'
-import minimist from 'minimist'
-import {exit} from 'process'
-import {ArchiveUtils} from '../util/archive'
-import {Block} from '../../webapp/src/blocks/block'
-import {Board} from '../../webapp/src/blocks/board'
-import {IPropertyOption, IPropertyTemplate, createBoard} from '../../webapp/src/blocks/board'
-import {createBoardView} from '../../webapp/src/blocks/boardView'
-import {createCard} from '../../webapp/src/blocks/card'
-import {createTextBlock} from '../../webapp/src/blocks/textBlock'
-import {createCheckboxBlock} from '../../webapp/src/blocks/checkboxBlock'
-import {Trello} from './trello'
-import {Utils} from './utils'
+import * as fs from "fs";
+import { ArchiveUtils } from "../util/archive";
+import { createGuid, currentTimestamp, parseArgs } from "../util/utils";
 
-// HACKHACK: To allow Utils.CreateGuid to work
-(global.window as any) = {}
+interface TrelloList {
+  id: string;
+  name: string;
+  closed?: boolean;
+  pos?: number;
+}
 
-const optionColors = [
-    // 'propColorDefault',
-    'propColorGray',
-    'propColorBrown',
-    'propColorOrange',
-    'propColorYellow',
-    'propColorGreen',
-    'propColorBlue',
-    'propColorPurple',
-    'propColorPink',
-    'propColorRed',
-]
-let optionColorIndex = 0
+interface TrelloChecklist {
+  id: string;
+  name: string;
+  checkItems: { id: string; name: string; state: "complete" | "incomplete" }[];
+}
+
+interface TrelloLabel {
+  id: string;
+  name: string;
+  color?: string;
+}
+
+interface TrelloCard {
+  id: string;
+  name: string;
+  desc?: string;
+  due?: string;
+  idList: string;
+  labels?: TrelloLabel[];
+  idChecklists?: string[];
+  closed?: boolean;
+  pos?: number;
+}
+
+interface TrelloBoard {
+  id: string;
+  name: string;
+  desc?: string;
+  lists?: TrelloList[];
+  cards?: TrelloCard[];
+  checklists?: TrelloChecklist[];
+  labels?: TrelloLabel[];
+}
+
+function convert(data: TrelloBoard) {
+  const boards: any[] = [];
+  const blocks: any[] = [];
+  const now = currentTimestamp();
+
+  const boardId = createGuid();
+  const viewId = createGuid();
+
+  const propList = {
+    id: createGuid(),
+    name: "List",
+    type: "select",
+    options: [] as { id: string; value: string; color: string }[],
+  };
+
+  const propDueDate = { id: createGuid(), name: "Due Date", type: "date", options: [] };
+
+  boards.push({
+    id: boardId,
+    teamId: "",
+    channelId: "",
+    type: "P",
+    title: data.name,
+    description: data.desc || "",
+    icon: "",
+    showDescription: false,
+    isTemplate: false,
+    templateVersion: 0,
+    minimumRole: "",
+    cardProperties: [propList, propDueDate],
+    createAt: now,
+    updateAt: now,
+    deleteAt: 0,
+  });
+
+  blocks.push({
+    id: viewId,
+    boardId,
+    parentId: "",
+    type: "view",
+    title: "Board view",
+    fields: { viewType: "board", cardOrder: [] },
+    schema: 1,
+    createAt: now,
+    updateAt: now,
+    deleteAt: 0,
+  });
+
+  const lists = (data.lists || []).filter((l) => !l.closed).sort((a, b) => (a.pos || 0) - (b.pos || 0));
+  const listOptions = new Map<string, string>();
+
+  for (const list of lists) {
+    const optId = createGuid();
+    propList.options.push({ id: optId, value: list.name, color: "propColorBlue" });
+    listOptions.set(list.id, optId);
+  }
+
+  const cards = (data.cards || []).filter((c) => !c.closed).sort((a, b) => (a.pos || 0) - (b.pos || 0));
+  const checklists = data.checklists || [];
+
+  for (const card of cards) {
+    const cardId = createGuid();
+    const properties: Record<string, string | string[]> = {};
+
+    const listOpt = listOptions.get(card.idList);
+    if (listOpt) properties[propList.id] = listOpt;
+
+    if (card.due) {
+      properties[propDueDate.id] = card.due;
+    }
+
+    blocks.push({
+      id: cardId,
+      boardId,
+      parentId: "",
+      type: "card",
+      title: card.name,
+      fields: {
+        icon: "",
+        isTemplate: false,
+        properties,
+        contentOrder: [],
+      },
+      schema: 1,
+      createAt: now,
+      updateAt: now,
+      deleteAt: 0,
+    });
+
+    if (card.desc) {
+      const textId = createGuid();
+      blocks.push({
+        id: textId,
+        boardId,
+        parentId: cardId,
+        type: "text",
+        title: card.desc,
+        fields: {},
+        schema: 1,
+        createAt: now,
+        updateAt: now,
+        deleteAt: 0,
+      });
+    }
+
+    const cardChecklists = checklists.filter((cl) => card.idChecklists?.includes(cl.id));
+    for (const cl of cardChecklists) {
+      for (const item of cl.checkItems) {
+        const checkboxId = createGuid();
+        blocks.push({
+          id: checkboxId,
+          boardId,
+          parentId: cardId,
+          type: "checkbox",
+          title: item.name,
+          fields: { checked: item.state === "complete" },
+          schema: 1,
+          createAt: now,
+          updateAt: now,
+          deleteAt: 0,
+        });
+      }
+    }
+  }
+
+  return { boards, blocks };
+}
 
 function main() {
-    const args: minimist.ParsedArgs = minimist(process.argv.slice(2))
+  const args = parseArgs(process.argv);
+  const inputFile = (args.i || args.input) as string;
+  const outputFile = (args.o || args.output || "archive.boardarchive") as string;
 
-    const inputFile = args['i']
-    const outputFile = args['o'] || 'archive.boardarchive'
+  if (!inputFile) {
+    console.error("Usage: npx ts-node importTrello.ts -i <input.json> [-o output]");
+    process.exit(1);
+  }
 
-    if (!inputFile) {
-        showHelp()
-    }
-
-    if (!fs.existsSync(inputFile)) {
-        console.error(`File not found: ${inputFile}`)
-        exit(2)
-    }
-
-    // Read input
-    const inputData = fs.readFileSync(inputFile, 'utf-8')
-    const input = JSON.parse(inputData) as Trello
-
-    // Convert
-    const [boards, blocks] = convert(input)
-
-    // Save output
-    // TODO: Stream output
-    const outputData = ArchiveUtils.buildBlockArchive(boards, blocks)
-    fs.writeFileSync(outputFile, outputData)
-
-    console.log(`Exported to ${outputFile}`)
+  const content = fs.readFileSync(inputFile, "utf-8");
+  const data: TrelloBoard = JSON.parse(content);
+  const { boards, blocks } = convert(data);
+  const archive = ArchiveUtils.buildBlockArchive(boards, blocks);
+  fs.writeFileSync(outputFile, archive, "utf-8");
+  console.log(`Written ${outputFile} (${boards.length} boards, ${blocks.length} blocks)`);
 }
 
-function convert(input: Trello): [Board[], Block[]] {
-    const boards: Board[] = []
-    const blocks: Block[] = []
-
-    // Board
-    const board = createBoard()
-    console.log(`Board: ${input.name}`)
-    board.title = input.name
-    board.description = input.desc
-
-    // Convert lists (columns) to a Select property
-    const optionIdMap = new Map<string, string>()
-    const options: IPropertyOption[] = []
-    input.lists.forEach(list => {
-        const optionId = Utils.createGuid()
-        optionIdMap.set(list.id, optionId)
-        const color = optionColors[optionColorIndex % optionColors.length]
-        optionColorIndex += 1
-        const option: IPropertyOption = {
-            id: optionId,
-            value: list.name,
-            color,
-        }
-        options.push(option)
-    })
-
-    const cardProperty: IPropertyTemplate = {
-        id: Utils.createGuid(),
-        name: 'List',
-        type: 'select',
-        options
-    }
-    board.cardProperties = [cardProperty]
-    boards.push(board)
-
-    // Board view
-    const view = createBoardView()
-    view.title = 'Board View'
-    view.fields.viewType = 'board'
-    view.boardId = board.id
-    view.parentId = board.id
-    blocks.push(view)
-
-    // Cards
-    input.cards.forEach(card => {
-        console.log(`Card: ${card.name}`)
-
-        const outCard = createCard()
-        outCard.title = card.name
-        outCard.boardId = board.id
-        outCard.parentId = board.id
-
-        // Map lists to Select property options
-        if (card.idList) {
-            const optionId = optionIdMap.get(card.idList)
-            if (optionId) {
-                outCard.fields.properties[cardProperty.id] = optionId
-            } else {
-                console.warn(`Invalid idList: ${card.idList} for card: ${card.name}`)
-            }
-        } else {
-            console.warn(`Missing idList for card: ${card.name}`)
-        }
-
-        blocks.push(outCard)
-
-        if (card.desc) {
-            // console.log(`\t${card.desc}`)
-            const text = createTextBlock()
-            text.title = card.desc
-            text.boardId = board.id
-            text.parentId = outCard.id
-            blocks.push(text)
-
-            outCard.fields.contentOrder = [text.id]
-        }
-
-        // Add Checklists
-        if (card.idChecklists && card.idChecklists.length > 0) {
-            card.idChecklists.forEach(checklistID => {
-                const lookup = input.checklists.find(e => e.id === checklistID)
-                if (lookup) {
-                    lookup.checkItems.forEach(trelloCheckBox=> {
-                        const checkBlock = createCheckboxBlock()
-                        checkBlock.title = trelloCheckBox.name
-                        if (trelloCheckBox.state === 'complete') {
-                            checkBlock.fields.value = true
-                        } else {
-                            checkBlock.fields.value = false
-                        }
-                        checkBlock.boardId = board.id
-                        checkBlock.parentId = outCard.id
-                        blocks.push(checkBlock)
-
-                        outCard.fields.contentOrder.push(checkBlock.id)
-                    })
-                }
-            })
-        }
-    })
-
-    console.log('')
-    console.log(`Found ${input.cards.length} card(s).`)
-
-    return [boards, blocks]
+if (require.main === module) {
+  main();
 }
 
-function showHelp() {
-    console.log('import -i <input.json> -o [output.boardarchive]')
-    exit(1)
-}
-
-main()
+export { convert };

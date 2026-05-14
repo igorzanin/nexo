@@ -1,244 +1,226 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-import * as fs from 'fs'
-import {exit} from 'process'
-import {ArchiveUtils} from '../util/archive'
-import {Block} from '../../webapp/src/blocks/block'
-import {Board} from '../../webapp/src/blocks/board'
-import {IPropertyOption, IPropertyTemplate, createBoard} from '../../webapp/src/blocks/board'
-import {createBoardView} from '../../webapp/src/blocks/boardView'
-import {Card, createCard} from '../../webapp/src/blocks/card'
-import {createTextBlock} from '../../webapp/src/blocks/textBlock'
-import {Utils} from './utils'
-import xml2js, {ParserOptions} from 'xml2js'
-import TurndownService from 'turndown'
+import * as fs from "fs";
+import { parseStringPromise } from "xml2js";
+import { ArchiveUtils } from "../util/archive";
+import { createGuid, currentTimestamp, parseArgs } from "../util/utils";
 
-// HACKHACK: To allow Utils.CreateGuid to work
-(global.window as any) = {}
-
-const optionColors = [
-    'propColorGray',
-    'propColorBrown',
-    'propColorOrange',
-    'propColorYellow',
-    'propColorGreen',
-    'propColorBlue',
-    'propColorPurple',
-    'propColorPink',
-    'propColorRed',
-]
-let optionColorIndex = 0
-
-var turndownService = new TurndownService()
-
-async function run(inputFile: string, outputFile: string): Promise<number> {
-    console.log(`input: ${inputFile}`)
-    console.log(`output: ${outputFile}`)
-
-    if (!inputFile) {
-        showHelp()
-    }
-
-    if (!fs.existsSync(inputFile)) {
-        console.error(`File not found: ${inputFile}`)
-        exit(2)
-    }
-
-    // Read input
-	console.log(`Reading ${inputFile}`)
-    const inputData = fs.readFileSync(inputFile, 'utf-8')
-
-	if (!inputData) {
-        console.error(`Unable to read data from file: ${inputFile}`)
-        exit(2)
-    }
-
-	console.log(`Read ${Math.round(inputData.length / 1024)} KB`)
-
-    const parserOptions: ParserOptions = {
-        explicitArray: false
-    }
-	const parser = new xml2js.Parser(parserOptions);
-	const input = await parser.parseStringPromise(inputData)
-
-	if (!input?.rss?.channel) {
-        console.error(`No channels in xml: ${inputFile}`)
-        exit(2)
-    }
-    const channel = input.rss.channel
-    const items = channel.item
-
-	// console.dir(items);
-
-    // Convert
-    const [boards, blocks] = convert(items)
-
-    // Save output
-    // TODO: Stream output
-    const outputData = ArchiveUtils.buildBlockArchive(boards, blocks)
-    fs.writeFileSync(outputFile, outputData)
-    console.log(`Exported ${blocks.length} block(s) to ${outputFile}`)
-
-    return blocks.length
+interface JiraIssue {
+  key: string[];
+  summary: string[];
+  description?: string[];
+  status?: string[];
+  priority?: string[];
+  assignee?: string[];
+  duedate?: string[];
+  resolution?: string[];
+  labels?: { label: string[] }[];
 }
 
-function convert(items: any[]): [Board[], Block[]] {
-    const boards: Board[] = []
-    const blocks: Block[] = []
-
-    // Board
-    const board = createBoard()
-    board.title = 'Jira import'
-
-    // Compile standard properties
-    board.cardProperties = []
-
-    const priorityProperty = buildCardPropertyFromValues('Priority', items.map(o => o.priority?._))
-    board.cardProperties.push(priorityProperty)
-
-    const statusProperty = buildCardPropertyFromValues('Status', items.map(o => o.status?._))
-    board.cardProperties.push(statusProperty)
-
-    const resolutionProperty = buildCardPropertyFromValues('Resolution', items.map(o => o.resolution?._))
-    board.cardProperties.push(resolutionProperty)
-
-    const typeProperty = buildCardPropertyFromValues('Type', items.map(o => o.type?._))
-    board.cardProperties.push(typeProperty)
-
-    const assigneeProperty = buildCardPropertyFromValues('Assignee', items.map(o => o.assignee?._))
-    board.cardProperties.push(assigneeProperty)
-
-    const reporterProperty = buildCardPropertyFromValues('Reporter', items.map(o => o.reporter?._))
-    board.cardProperties.push(reporterProperty)
-
-    const originalUrlProperty: IPropertyTemplate = {
-        id: Utils.createGuid(),
-        name: 'Original URL',
-        type: 'url',
-        options: []
-    }
-    board.cardProperties.push(originalUrlProperty)
-
-    const createdDateProperty: IPropertyTemplate = {
-        id: Utils.createGuid(),
-        name: 'Created Date',
-        type: 'date',
-        options: []
-    }
-    board.cardProperties.push(createdDateProperty)
-
-    boards.push(board)
-
-    // Board view
-    const view = createBoardView()
-    view.title = 'Board View'
-    view.fields.viewType = 'board'
-    view.boardId = board.id
-    view.parentId = board.id
-    blocks.push(view)
-
-    for (const item of items) {
-        console.log(
-            `Item: ${item.summary}, ` +
-            `priority: ${item.priority?._}, ` +
-            `status: ${item.status?._}, ` +
-            `type: ${item.type?._}`)
-
-        const card = createCard()
-        card.title = item.summary
-        card.boardId = board.id
-        card.parentId = board.id
-
-        // Map standard properties
-        if (item.priority?._) { setSelectProperty(card, priorityProperty, item.priority._) }
-        if (item.status?._) { setSelectProperty(card, statusProperty, item.status._) }
-        if (item.resolution?._) { setSelectProperty(card, resolutionProperty, item.resolution._) }
-        if (item.type?._) { setSelectProperty(card, typeProperty, item.type._) }
-        if (item.assignee?._) { setSelectProperty(card, assigneeProperty, item.assignee._) }
-        if (item.reporter?._) { setSelectProperty(card, reporterProperty, item.reporter._) }
-
-        if (item.link) { setProperty(card, originalUrlProperty.id, item.link)}
-        if (item.created) {
-            const dateInMs = Date.parse(item.created)
-            setProperty(card, createdDateProperty.id, dateInMs.toString())
-        }
-
-        // TODO: Map custom properties
-
-        if (item.description) {
-            const description = turndownService.turndown(item.description)
-            console.log(`\t${description}`)
-            const text = createTextBlock()
-            text.title = description
-            text.boardId = board.id
-            text.parentId = card.id
-            blocks.push(text)
-
-            card.fields.contentOrder = [text.id]
-        }
-
-        blocks.push(card)
-    }
-
-    return [boards, blocks]
+interface JiraProject {
+  id: string[];
+  name: string[];
+  description?: string[];
+  issues?: JiraIssue[];
 }
 
-function buildCardPropertyFromValues(propertyName: string, allValues: string[]) {
-    const options: IPropertyOption[] = []
+function htmlToMarkdown(html: string): string {
+  return html
+    .replace(/<h1>([\s\S]*?)<\/h1>/gi, "# $1\n\n")
+    .replace(/<h2>([\s\S]*?)<\/h2>/gi, "## $1\n\n")
+    .replace(/<h3>([\s\S]*?)<\/h3>/gi, "### $1\n\n")
+    .replace(/<b>([\s\S]*?)<\/b>/gi, "**$1**")
+    .replace(/<i>([\s\S]*?)<\/i>/gi, "*$1*")
+    .replace(/<a href="([^"]+)">([\s\S]*?)<\/a>/gi, "[$2]($1)")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<li>([\s\S]*?)<\/li>/gi, "- $1\n")
+    .replace(/<ul>([\s\S]*?)<\/ul>/gi, "$1")
+    .replace(/<p>([\s\S]*?)<\/p>/gi, "$1\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
-    // Remove empty and duplicate values
-    const values = allValues.
-        filter(o => !!o).
-        filter((x, y) => allValues.indexOf(x) == y);
+function convert(project: JiraProject) {
+  const boards: any[] = [];
+  const blocks: any[] = [];
+  const now = currentTimestamp();
 
-    for (const value of values) {
-        const optionId = Utils.createGuid()
-        const color = optionColors[optionColorIndex % optionColors.length]
-        optionColorIndex += 1
-        const option: IPropertyOption = {
-            id: optionId,
-            value,
-            color,
-        }
-        options.push(option)
+  const boardId = createGuid();
+  const viewId = createGuid();
+
+  const propStatus = { id: createGuid(), name: "Status", type: "select", options: [] as { id: string; value: string; color: string }[] };
+  const propPriority = { id: createGuid(), name: "Priority", type: "select", options: [] as { id: string; value: string; color: string }[] };
+  const propAssignee = { id: createGuid(), name: "Assignee", type: "person", options: [] };
+  const propDueDate = { id: createGuid(), name: "Due Date", type: "date", options: [] };
+  const propResolution = { id: createGuid(), name: "Resolution", type: "select", options: [] as { id: string; value: string; color: string }[] };
+  const propLabels = { id: createGuid(), name: "Labels", type: "multiSelect", options: [] as { id: string; value: string; color: string }[] };
+
+  boards.push({
+    id: boardId,
+    teamId: "",
+    channelId: "",
+    type: "P",
+    title: project.name[0],
+    description: project.description?.[0] || "",
+    icon: "",
+    showDescription: false,
+    isTemplate: false,
+    templateVersion: 0,
+    minimumRole: "",
+    cardProperties: [propStatus, propPriority, propAssignee, propDueDate, propResolution, propLabels],
+    createAt: now,
+    updateAt: now,
+    deleteAt: 0,
+  });
+
+  blocks.push({
+    id: viewId,
+    boardId,
+    parentId: "",
+    type: "view",
+    title: "Board view",
+    fields: { viewType: "board", cardOrder: [], visiblePropertyIds: [] },
+    schema: 1,
+    createAt: now,
+    updateAt: now,
+    deleteAt: 0,
+  });
+
+  const seenStatuses = new Set<string>();
+  const seenPriorities = new Set<string>();
+  const seenResolutions = new Set<string>();
+  const seenLabels = new Set<string>();
+
+  const issues = project.issues || [];
+  for (const issue of issues) {
+    const cardId = createGuid();
+    const properties: Record<string, string | string[]> = {};
+
+    if (issue.status?.[0] && !seenStatuses.has(issue.status[0])) {
+      seenStatuses.add(issue.status[0]);
+      propStatus.options.push({ id: createGuid(), value: issue.status[0], color: "propColorBlue" });
+    }
+    if (issue.status?.[0]) {
+      const opt = propStatus.options.find((o) => o.value === issue.status[0]);
+      if (opt) properties[propStatus.id] = opt.id;
     }
 
-    const cardProperty: IPropertyTemplate = {
-        id: Utils.createGuid(),
-        name: propertyName,
-        type: 'select',
-        options
+    if (issue.priority?.[0] && !seenPriorities.has(issue.priority[0])) {
+      seenPriorities.add(issue.priority[0]);
+      propPriority.options.push({ id: createGuid(), value: issue.priority[0], color: "propColorYellow" });
+    }
+    if (issue.priority?.[0]) {
+      const opt = propPriority.options.find((o) => o.value === issue.priority[0]);
+      if (opt) properties[propPriority.id] = opt.id;
     }
 
-    console.log(`Property: ${propertyName}, values: ${values}`)
-
-    return cardProperty
-}
-
-function setSelectProperty(card: Card, cardProperty: IPropertyTemplate, propertyValue: string) {
-    const option = optionForPropertyValue(cardProperty, propertyValue)
-    if (option) {
-        card.fields.properties[cardProperty.id] = option.id
+    if (issue.resolution?.[0] && !seenResolutions.has(issue.resolution[0])) {
+      seenResolutions.add(issue.resolution[0]);
+      propResolution.options.push({ id: createGuid(), value: issue.resolution[0], color: "propColorGray" });
     }
-}
-
-function setProperty(card: Card, cardPropertyId: string, propertyValue: string) {
-    card.fields.properties[cardPropertyId] = propertyValue
-}
-
-function optionForPropertyValue(cardProperty: IPropertyTemplate, propertyValue: string): IPropertyOption | null {
-    const option = cardProperty.options.find(o => o.value === propertyValue)
-    if (!option) {
-        console.error(`Property value not found: ${propertyValue}`)
-        return null
+    if (issue.resolution?.[0]) {
+      const opt = propResolution.options.find((o) => o.value === issue.resolution[0]);
+      if (opt) properties[propResolution.id] = opt.id;
     }
 
-    return option
+    if (issue.assignee?.[0]) {
+      properties[propAssignee.id] = issue.assignee[0];
+    }
+    if (issue.duedate?.[0]) {
+      properties[propDueDate.id] = issue.duedate[0];
+    }
+
+    const labels = issue.labels?.[0]?.label || [];
+    const labelValues: string[] = [];
+    for (const label of labels) {
+      if (!seenLabels.has(label)) {
+        seenLabels.add(label);
+        propLabels.options.push({ id: createGuid(), value: label, color: "propColorGreen" });
+      }
+      const opt = propLabels.options.find((o) => o.value === label);
+      if (opt) labelValues.push(opt.id);
+    }
+    if (labelValues.length > 0) {
+      properties[propLabels.id] = labelValues;
+    }
+
+    const descHtml = issue.description?.[0] || "";
+    const descMarkdown = descHtml ? htmlToMarkdown(descHtml) : "";
+
+    blocks.push({
+      id: cardId,
+      boardId,
+      parentId: "",
+      type: "card",
+      title: issue.summary?.[0] || issue.key?.[0] || "",
+      fields: {
+        icon: "",
+        isTemplate: false,
+        properties,
+        contentOrder: [],
+      },
+      schema: 1,
+      createAt: now,
+      updateAt: now,
+      deleteAt: 0,
+    });
+
+    if (descMarkdown) {
+      const textId = createGuid();
+      blocks.push({
+        id: textId,
+        boardId,
+        parentId: cardId,
+        type: "text",
+        title: descMarkdown,
+        fields: {},
+        schema: 1,
+        createAt: now,
+        updateAt: now,
+        deleteAt: 0,
+      });
+    }
+  }
+
+  return { boards, blocks };
 }
 
-function showHelp() {
-    console.log('import -i <input.xml> -o [output.boardarchive]')
-    exit(1)
+async function main() {
+  const args = parseArgs(process.argv);
+  const inputFile = args.i || args.input;
+  const outputFile = (args.o || args.output || "archive.boardarchive") as string;
+
+  if (!inputFile) {
+    console.error("Usage: npx ts-node jiraImporter.ts -i <input.xml> [-o output]");
+    process.exit(1);
+  }
+
+  const content = fs.readFileSync(inputFile as string, "utf-8");
+  const parsed = await parseStringPromise(content);
+
+  const rss = parsed.rss?.channel?.[0]?.item;
+  const issues: JiraIssue[] = (rss || []).map((item: any) => ({
+    key: item.key,
+    summary: item.summary,
+    description: item.description,
+    status: item.status ? [item.status[0]._] : undefined,
+    priority: item.priority ? [item.priority[0]._] : undefined,
+    assignee: item.assignee ? [item.assignee[0]._] : undefined,
+    duedate: item.duedate,
+    resolution: item.resolution ? [item.resolution[0]._] : undefined,
+    labels: item.labels,
+  }));
+
+  const projectName = parsed.rss?.channel?.[0]?.title?.[0] || "Jira Import";
+  const project: JiraProject = { id: ["1"], name: [projectName], issues };
+
+  const { boards, blocks } = convert(project);
+  const archive = ArchiveUtils.buildBlockArchive(boards, blocks);
+  fs.writeFileSync(outputFile as string, archive, "utf-8");
+  console.log(`Written ${outputFile} (${boards.length} boards, ${blocks.length} blocks)`);
 }
 
-export { run }
+if (require.main === module) {
+  main();
+}
+
+export { convert, htmlToMarkdown };

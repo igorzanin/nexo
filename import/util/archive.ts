@@ -1,98 +1,78 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-import {Block} from '../../webapp/src/blocks/block'
-import {Board} from '../../webapp/src/blocks/board'
+interface BoardData {
+  id: string;
+  teamId: string;
+  title: string;
+  type: string;
+  description?: string;
+  icon?: string;
+  cardProperties?: unknown[];
+}
+
+interface BlockData {
+  id: string;
+  boardId: string;
+  parentId: string;
+  type: string;
+  title: string;
+  fields: Record<string, unknown>;
+  schema?: number;
+  createAt: number;
+  updateAt: number;
+}
 
 interface ArchiveHeader {
-    version: number
-    date: number
+  version: number;
+  date: number;
 }
 
-// This schema allows the expansion of additional line types in the future
-interface ArchiveLine {
-    type: string,
-    data: unknown,
-}
+export class ArchiveUtils {
+  static buildBlockArchive(boards: BoardData[], blocks: BlockData[]): string {
+    const header: ArchiveHeader = {
+      version: 1,
+      date: Date.now(),
+    };
 
-interface BlockArchiveLine extends ArchiveLine {
-    type: 'block',
-    data: Block
-}
+    const lines: string[] = [JSON.stringify(header)];
 
-interface BoardArchiveLine extends ArchiveLine {
-    type: 'board',
-    data: Board
-}
-
-class ArchiveUtils {
-    static buildBlockArchive(boards: readonly Board[], blocks: readonly Block[]): string {
-        const header: ArchiveHeader = {
-            version: 1,
-            date: Date.now(),
-        }
-
-        const headerString = JSON.stringify(header)
-        let content = headerString + '\n'
-
-        for (const board of boards) {
-            const line: BoardArchiveLine = {
-                type: 'board',
-                data: board,
-            }
-            const lineString = JSON.stringify(line)
-            content += lineString
-            content += '\n'
-        }
-
-        for (const block of blocks) {
-            const line: BlockArchiveLine = {
-                type: 'block',
-                data: block,
-            }
-            const lineString = JSON.stringify(line)
-            content += lineString
-            content += '\n'
-        }
-
-        return content
+    for (const board of boards) {
+      lines.push(JSON.stringify({ type: "board", data: board }));
     }
 
-    static parseBlockArchive(contents: string): Block[] {
-        const blocks: Block[] = []
-        const allLineStrings = contents.split('\n')
-        if (allLineStrings.length >= 2) {
-            const headerString = allLineStrings[0]
-            const header = JSON.parse(headerString) as ArchiveHeader
-            if (header.date && header.version >= 1) {
-                const lineStrings = allLineStrings.slice(1)
-                let lineNum = 2
-                for (const lineString of lineStrings) {
-                    if (!lineString) {
-                        // Ignore empty lines, e.g. last line
-                        continue
-                    }
-                    const line = JSON.parse(lineString) as ArchiveLine
-                    if (!line || !line.type || !line.data) {
-                        throw new Error(`ERROR parsing line ${lineNum}`)
-                    }
-                    switch (line.type) {
-                    case 'block': {
-                        const blockLine = line as BlockArchiveLine
-                        const block = blockLine.data
-                        blocks.push(block)
-                        break
-                    }
-                    }
-
-                    lineNum += 1
-                }
-            } else {
-                throw new Error('ERROR parsing header')
-            }
-        }
-
-        return blocks
+    for (const block of blocks) {
+      lines.push(JSON.stringify({ type: "block", data: block }));
     }
-}
 
-export {ArchiveHeader, ArchiveLine, BlockArchiveLine, ArchiveUtils}
+    return lines.join("\n") + "\n";
+  }
+
+  static parseBlockArchive(contents: string): { boards: BoardData[]; blocks: BlockData[] } {
+    const lines = contents.trim().split("\n").filter((l) => l.trim());
+    if (lines.length === 0) {
+      throw new Error("Empty archive");
+    }
+
+    const header: ArchiveHeader = JSON.parse(lines[0]);
+    if (!header.version || !header.date) {
+      throw new Error("Invalid archive header");
+    }
+
+    const boards: BoardData[] = [];
+    const blocks: BlockData[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const item = JSON.parse(lines[i]);
+      switch (item.type) {
+        case "board":
+          boards.push(item.data);
+          break;
+        case "block":
+          blocks.push(item.data);
+          break;
+        default:
+          console.warn(`Unknown archive entry type: ${item.type}`);
+      }
+    }
+
+    return { boards, blocks };
+  }
+}

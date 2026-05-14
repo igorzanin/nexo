@@ -1,191 +1,184 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-import * as fs from 'fs'
-import minimist from 'minimist'
-import {exit} from 'process'
-import {ArchiveUtils} from '../util/archive'
-import {Block} from '../../webapp/src/blocks/block'
-import {Board} from '../../webapp/src/blocks/board'
-import {IPropertyOption, IPropertyTemplate, createBoard} from '../../webapp/src/blocks/board'
-import {createBoardView} from '../../webapp/src/blocks/boardView'
-import {createCard} from '../../webapp/src/blocks/card'
-import {createTextBlock} from '../../webapp/src/blocks/textBlock'
-import {Asana, Workspace} from './asana'
-import {Utils} from './utils'
+import * as fs from "fs";
+import { ArchiveUtils } from "../util/archive";
+import { createGuid, currentTimestamp, parseArgs } from "../util/utils";
 
-// HACKHACK: To allow Utils.CreateGuid to work
-(global.window as any) = {}
+interface AsanaTask {
+  id: number;
+  name: string;
+  notes?: string;
+  completed?: boolean;
+  due_on?: string;
+  assignee?: { id: number; name: string };
+  projects?: { id: number; name: string }[];
+  tags?: { id: number; name: string }[];
+}
 
-const optionColors = [
-    // 'propColorDefault',
-    'propColorGray',
-    'propColorBrown',
-    'propColorOrange',
-    'propColorYellow',
-    'propColorGreen',
-    'propColorBlue',
-    'propColorPurple',
-    'propColorPink',
-    'propColorRed',
-]
-let optionColorIndex = 0
+interface AsanaSection {
+  id: number;
+  name: string;
+}
+
+interface AsanaProject {
+  id: number;
+  name: string;
+  notes?: string;
+}
+
+interface AsanaExport {
+  projects?: AsanaProject[];
+  sections?: Record<number, AsanaSection[]>;
+  tasks?: Record<number, AsanaTask[]>;
+}
+
+function convert(data: AsanaExport) {
+  const boards: any[] = [];
+  const blocks: any[] = [];
+  const now = currentTimestamp();
+
+  const projects = data.projects || [];
+  const allTasks = data.tasks || {};
+  const allSections = data.sections || {};
+
+  for (const project of projects) {
+    const boardId = createGuid();
+    const viewId = createGuid();
+
+    boards.push({
+      id: boardId,
+      teamId: "",
+      channelId: "",
+      type: "P",
+      title: project.name,
+      description: project.notes || "",
+      icon: "",
+      showDescription: false,
+      isTemplate: false,
+      templateVersion: 0,
+      minimumRole: "",
+      cardProperties: [
+        { id: createGuid(), name: "Section", type: "select", options: [] },
+      ],
+      createAt: now,
+      updateAt: now,
+      deleteAt: 0,
+    });
+
+    blocks.push({
+      id: viewId,
+      boardId,
+      parentId: "",
+      createdBy: "",
+      modifiedBy: "",
+      type: "view",
+      title: "Board view",
+      fields: { viewType: "board", cardOrder: [], visiblePropertyIds: [] },
+      schema: 1,
+      createAt: now,
+      updateAt: now,
+      deleteAt: 0,
+    });
+
+    const projectSections = allSections[project.id] || [];
+    const sectionOptions: { id: string; value: string; color: string }[] = [];
+    const sectionMap: Record<string, string> = {};
+
+    for (const section of projectSections) {
+      const optId = createGuid();
+      sectionOptions.push({ id: optId, value: section.name, color: "propColorBlue" });
+      sectionMap[section.id] = optId;
+    }
+
+    if (boards.length > 0) {
+      const board = boards[boards.length - 1];
+      board.cardProperties[0].options = sectionOptions;
+    }
+
+    const tasks = allTasks[project.id] || [];
+    for (const task of tasks) {
+      const cardId = createGuid();
+      const properties: Record<string, string | string[]> = {};
+
+      const assignee = task.assignee;
+      if (assignee) {
+        const propId = createGuid();
+        if (!board.cardProperties.find((p: any) => p.name === "Assignee")) {
+          board.cardProperties.push({ id: propId, name: "Assignee", type: "person", options: [] });
+        }
+        properties[propId] = assignee.name;
+      }
+
+      const dueDate = task.due_on;
+      if (dueDate) {
+        const propId = createGuid();
+        if (!board.cardProperties.find((p: any) => p.name === "Due Date")) {
+          board.cardProperties.push({ id: propId, name: "Due Date", type: "date", options: [] });
+        }
+        properties[propId] = dueDate;
+      }
+
+      blocks.push({
+        id: cardId,
+        boardId,
+        parentId: "",
+        createdBy: "",
+        modifiedBy: "",
+        type: "card",
+        title: task.name,
+        fields: {
+          icon: "",
+          isTemplate: false,
+          properties,
+          contentOrder: [],
+        },
+        schema: 1,
+        createAt: now,
+        updateAt: now,
+        deleteAt: 0,
+      });
+
+      if (task.notes) {
+        const textId = createGuid();
+        blocks.push({
+          id: textId,
+          boardId,
+          parentId: cardId,
+          createdBy: "",
+          modifiedBy: "",
+          type: "text",
+          title: task.notes,
+          fields: {},
+          schema: 1,
+          createAt: now,
+          updateAt: now,
+          deleteAt: 0,
+        });
+      }
+    }
+  }
+
+  return { boards, blocks };
+}
 
 function main() {
-    const args: minimist.ParsedArgs = minimist(process.argv.slice(2))
+  const args = parseArgs(process.argv);
+  const inputFile = args.i || args.input;
+  const outputFile = (args.o || args.output || "archive.boardarchive") as string;
 
-    const inputFile = args['i']
-    const outputFile = args['o'] || 'archive.boardarchive'
+  if (!inputFile) {
+    console.error("Usage: npx ts-node importAsana.ts -i <input.json> [-o output]");
+    process.exit(1);
+  }
 
-    if (!inputFile) {
-        showHelp()
-    }
-
-    if (!fs.existsSync(inputFile)) {
-        console.error(`File not found: ${inputFile}`)
-        exit(2)
-    }
-
-    // Read input
-    const inputData = fs.readFileSync(inputFile, 'utf-8')
-    const input = JSON.parse(inputData) as Asana
-
-    // Convert
-    const [boards, blocks] = convert(input)
-
-    // Save output
-    // TODO: Stream output
-    const outputData = ArchiveUtils.buildBlockArchive(boards, blocks)
-    fs.writeFileSync(outputFile, outputData)
-
-    console.log(`Exported to ${outputFile}`)
+  const content = fs.readFileSync(inputFile as string, "utf-8");
+  const data: AsanaExport = JSON.parse(content);
+  const { boards, blocks } = convert(data);
+  const archive = ArchiveUtils.buildBlockArchive(boards, blocks);
+  fs.writeFileSync(outputFile as string, archive, "utf-8");
+  console.log(`Written ${outputFile} (${boards.length} boards, ${blocks.length} blocks)`);
 }
 
-function getProjects(input: Asana): Workspace[] {
-    const projectMap = new Map<string, Workspace>()
-
-    input.data.forEach(datum => {
-        datum.projects.forEach(project => {
-            if (!projectMap.get(project.gid)) {
-                projectMap.set(project.gid, project)
-            }
-        })
-    })
-
-    return [...projectMap.values()]
+if (require.main === module) {
+  main();
 }
 
-function getSections(input: Asana, projectId: string): Workspace[] {
-    const sectionMap = new Map<string, Workspace>()
-
-    input.data.forEach(datum => {
-        const membership = datum.memberships.find(o => o.project.gid === projectId)
-        if (membership) {
-            if (!sectionMap.get(membership.section.gid)) {
-                sectionMap.set(membership.section.gid, membership.section)
-            }
-        }
-    })
-
-    return [...sectionMap.values()]
-}
-
-function convert(input: Asana): [Board[], Block[]] {
-    const projects = getProjects(input)
-    if (projects.length < 1) {
-        console.error('No projects found')
-        return [[],[]]
-    }
-
-    // TODO: Handle multiple projects
-    const project = projects[0]
-
-    const boards: Board[] = []
-    const blocks: Block[] = []
-
-    // Board
-    const board = createBoard()
-    console.log(`Board: ${project.name}`)
-    board.title = project.name
-
-    // Convert sections (columns) to a Select property
-    const optionIdMap = new Map<string, string>()
-    const options: IPropertyOption[] = []
-    const sections = getSections(input, project.gid)
-    sections.forEach(section => {
-        const optionId = Utils.createGuid()
-        optionIdMap.set(section.gid, optionId)
-        const color = optionColors[optionColorIndex % optionColors.length]
-        optionColorIndex += 1
-        const option: IPropertyOption = {
-            id: optionId,
-            value: section.name,
-            color,
-        }
-        options.push(option)
-    })
-
-    const cardProperty: IPropertyTemplate = {
-        id: Utils.createGuid(),
-        name: 'Section',
-        type: 'select',
-        options
-    }
-    board.cardProperties = [cardProperty]
-    boards.push(board)
-
-    // Board view
-    const view = createBoardView()
-    view.title = 'Board View'
-    view.fields.viewType = 'board'
-    view.parentId = board.id
-    view.boardId = board.id
-    blocks.push(view)
-
-    // Cards
-    input.data.forEach(card => {
-        console.log(`Card: ${card.name}`)
-
-        const outCard = createCard()
-        outCard.title = card.name
-        outCard.boardId = board.id
-        outCard.parentId = board.id
-
-        // Map lists to Select property options
-        const membership = card.memberships.find(o => o.project.gid === project.gid)
-        if (membership) {
-            const optionId = optionIdMap.get(membership.section.gid)
-            if (optionId) {
-                outCard.fields.properties[cardProperty.id] = optionId
-            } else {
-                console.warn(`Invalid idList: ${membership.section.gid} for card: ${card.name}`)
-            }
-        } else {
-            console.warn(`Missing idList for card: ${card.name}`)
-        }
-
-        blocks.push(outCard)
-
-        if (card.notes) {
-            // console.log(`\t${card.notes}`)
-            const text = createTextBlock()
-            text.title = card.notes
-            text.parentId = outCard.id
-            text.boardId = board.id
-            blocks.push(text)
-
-            outCard.fields.contentOrder = [text.id]
-        }
-    })
-
-    console.log('')
-    console.log(`Found ${input.data.length} card(s).`)
-
-    return [boards, blocks]
-}
-
-function showHelp() {
-    console.log('import -i <input.json> -o [output.boardarchive]')
-    exit(1)
-}
-
-main()
+export { convert };

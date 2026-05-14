@@ -1,0 +1,35 @@
+[project]
+name = "nexo"
+version = "1.0.0"
+description = "Workspace colaborativo auto-hospedado"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]",
+    "sqlalchemy>=2.0",
+    "alembic",
+    "pydantic>=2.0",
+    "python-jose[cryptography]",
+    "bcrypt>=4.0",
+    "python-multipart",
+    "slowapi",
+    "prometheus-client",
+    "aiofiles",
+    "psycopg2-binary",
+    "pymysql",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+    "pytest-asyncio",
+    "coverage",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["nexo*"]
