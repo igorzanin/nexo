@@ -1,0 +1,35 @@
+import { computed } from "vue";
+import type { Block } from "../types/block";
+
+export type CalculationType = "count" | "sum" | "avg" | "min" | "max" | "countValue" | "countChecked" | "percentChecked";
+
+export function useCalculations(cards: Block[], propertyId: string) {
+  const values = computed(() => {
+    return cards
+      .map((c) => (c.fields?.properties as Record<string, string | string[]>)?.[propertyId])
+      .filter((v) => v !== undefined && v !== null && v !== "");
+  });
+
+  const count = computed(() => values.value.length);
+  const sum = computed(() => values.value.reduce((acc, v) => acc + (Number(v) || 0), 0));
+  const avg = computed(() => (count.value > 0 ? sum.value / count.value : 0));
+  const minValue = computed(() => values.value.length > 0 ? Math.min(...values.value.map((v) => Number(v) || 0)) : 0);
+  const maxValue = computed(() => values.value.length > 0 ? Math.max(...values.value.map((v) => Number(v) || 0)) : 0);
+  const countChecked = computed(() => values.value.filter((v) => v === "true" || v === true).length);
+  const percentChecked = computed(() => (count.value > 0 ? (countChecked.value / count.value) * 100 : 0));
+
+  function calculate(type: CalculationType): number | string {
+    switch (type) {
+      case "count": return count.value;
+      case "sum": return sum.value;
+      case "avg": return avg.value;
+      case "min": return minValue.value;
+      case "max": return maxValue.value;
+      case "countChecked": return countChecked.value;
+      case "percentChecked": return `${Math.round(percentChecked.value)}%`;
+      default: return "";
+    }
+  }
+
+  return { count, sum, avg, min: minValue, max: maxValue, countChecked, percentChecked, calculate };
+}

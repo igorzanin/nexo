@@ -1,0 +1,10 @@
+{
+  "schema-version": 1,
+  "feature-dir": "_reversa_forward/002-frontend-gap-closure",
+  "feature-id": "002",
+  "short-name": "frontend-gap-closure",
+  "started-at": "2026-05-14T11:58:00-03:00",
+  "current-stage": "to-do",
+  "stages-completed": ["clarify", "plan"],
+  "paused-features": []
+}

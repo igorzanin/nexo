@@ -1,0 +1,25 @@
+{
+  "name": "nexo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nexo - Workspace colaborativo auto-hospedado",
+  "workspaces": [
+    "webapp",
+    "desktop"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w webapp",
+    "dev:backend": ".venv/Scripts/python.exe run_dev.py",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
+    "dev:desktop": "npm run start -w desktop",
+    "build": "npm run build -w webapp && npm run build -w desktop",
+    "build:webapp": "npm run build -w webapp",
+    "build:desktop": "npm run build -w desktop",
+    "preview": "npm run preview -w webapp",
+    "install:all": "npm install && npm install -w webapp && npm install -w desktop"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

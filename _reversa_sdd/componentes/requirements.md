@@ -21,11 +21,11 @@ Conjunto de componentes Vue 3 + Composition API + Bootstrap 5.3 que implementam 
 - Implementar 4 visualizações de quadro: Kanban, Tabela, Calendário e Galeria
 - Gerenciar detalhe e edição de cartão (CardDialog, CardDetail)
 - Renderizar blocos de conteúdo (texto, imagem, divisor, checkbox, anexo)
-- Gerenciar barra lateral com categorias e boards (drag-and-drop)
+- Gerenciar barra lateral com categorias e boards (drag-and-drop, criação de categorias customizadas)
 - Controlar permissões de UI via BoardPermissionGate
 - Gerenciar compartilhamento de boards
 - Implementar busca com debounce e resultados
-- Executar tour de onboarding
+- Executar tour de onboarding (WelcomePage)
 - Exibir notificações flash e banners
 
 ## Regras de Negócio (mantidas)
@@ -33,9 +33,16 @@ Conjunto de componentes Vue 3 + Composition API + Bootstrap 5.3 que implementam 
 - Componentes leem estado via `storeToRefs` das stores Pinia 🟢
 - BoardPermissionGate condiciona renderização de elementos de UI 🟢
 - Cartão pode ser arrastado entre colunas no Kanban e entre linhas na Tabela 🟢
+- Colunas do Kanban podem ser colapsadas/expandidas individualmente 🟢
+- Tabela: edição inline de propriedade salva ao pressionar Enter ou ao perder o foco 🟢
+- Tabela: linhas podem ser reordenadas via drag-and-drop 🟢
 - Categorias da sidebar podem ser reordenadas via drag-and-drop 🟢
+- Sidebar: é possível criar categorias customizadas inline 🟢
 - Modal de cartão (CardDialog) é renderizado via Teleport 🟢
 - Conteúdo do cartão é extensível via registry de ContentHandler por BlockType 🟢
+- Calendário: cards podem ser criados clicando em uma data 🟢
+- Calendário: navegação entre meses via botões anterior/próximo 🟢
+- WebSocket: reconexão automática com backoff de 5 segundos, sem banner visível por ora 🟡
 - **Consolidado**: blocksEditor + contentElement unificados ✅
 
 ## Árvore de Componentes

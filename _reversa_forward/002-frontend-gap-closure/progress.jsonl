@@ -1,0 +1,11 @@
+{"ts":"2026-05-14T12:05:00-03:00","action":"T001","status":"done","files":["webapp/src/composables/useMutator.ts"]}
+{"ts":"2026-05-14T12:05:00-03:00","action":"T002","status":"done","files":["webapp/src/components/widgets/Modal.vue"]}
+{"ts":"2026-05-14T12:05:00-03:00","action":"T003","status":"done","files":["webapp/src/stores/ (undo stack no Mutator)"]}
+{"ts":"2026-05-14T12:05:00-03:00","action":"T022","status":"done","files":["webapp/src/pages/board/useUndoRedo.ts"]}
+{"ts":"2026-05-14T12:10:00-03:00","action":"T004","status":"done","files":["webapp/src/components/kanban/Kanban.vue","webapp/src/components/kanban/KanbanColumn.vue"]}
+{"ts":"2026-05-14T12:10:00-03:00","action":"T005","status":"done","files":["webapp/src/components/kanban/Kanban.vue"]}
+{"ts":"2026-05-14T12:10:00-03:00","action":"T006","status":"done","files":["webapp/src/components/kanban/CardBadges.vue","webapp/src/components/kanban/KanbanCard.vue"]}
+{"ts":"2026-05-14T12:40:00-03:00","action":"BUGFIX-01","status":"done","files":["webapp/src/api/client.ts","webapp/src/api/index.ts","webapp/src/stores/sidebarStore.ts","webapp/src/pages/board/BoardPage.vue","webapp/src/components/sidebar/Sidebar.vue","webapp/src/components/centerPanel/CenterPanel.vue"]}
+{"ts":"2026-05-14T12:45:00-03:00","action":"T017","status":"done","files":["webapp/src/components/common/ViewHeader.vue","webapp/src/components/centerPanel/CenterPanel.vue"]}
+{"ts":"2026-05-14T12:45:00-03:00","action":"T018","status":"done","files":["webapp/src/components/common/ViewHeader.vue"]}
+{"ts":"2026-05-14T12:50:00-03:00","action":"CARD-DIALOG-REDESIGN","status":"done","files":["webapp/src/components/cardDetail/CardDialog.vue"]}

@@ -10,7 +10,10 @@ nexo/webapp/src/
 │   ├── sidebar/
 │   │   ├── Sidebar.vue
 │   │   ├── SidebarCategory.vue
-│   │   └── SidebarBoardItem.vue
+│   │   ├── SidebarBoardItem.vue
+│   │   ├── CreateCategory.vue
+│   │   ├── SidebarSettingsMenu.vue
+│   │   └── SidebarUserMenu.vue
 │   ├── centerPanel/
 │   │   └── CenterPanel.vue
 │   ├── kanban/
@@ -46,19 +49,46 @@ nexo/webapp/src/
 │   ├── share/
 │   │   └── ShareBoard.vue
 │   ├── onboarding/
-│   │   └── OnboardingTour.vue
 │   ├── flash/
 │   │   └── FlashMessages.vue
-│   └── common/
-│       ├── ViewHeader.vue
-│       ├── ViewTitle.vue
-│       └── ...
+│   ├── common/
+│   │   ├── ViewHeader.vue
+│   │   ├── ViewTitle.vue
+│   │   ├── ViewHeaderActionsMenu.vue
+│   │   ├── ViewHeaderSortMenu.vue
+│   │   ├── ViewHeaderGroupByMenu.vue
+│   │   ├── ViewHeaderPropertiesMenu.vue
+│   │   └── ViewHeaderSearch.vue
+│   ├── properties/
+│   │   ├── TextProperty.vue
+│   │   ├── NumberProperty.vue
+│   │   ├── EmailProperty.vue
+│   │   ├── UrlProperty.vue
+│   │   ├── PhoneProperty.vue
+│   │   ├── CheckboxProperty.vue
+│   │   ├── SelectProperty.vue
+│   │   ├── MultiSelectProperty.vue
+│   │   ├── DateProperty.vue
+│   │   ├── PersonProperty.vue
+│   │   └── ReadOnlyProperty.vue
+│   ├── widgets/
+│   │   ├── ConfirmationDialogBox.vue
+│   │   ├── Menu.vue
+│   │   ├── EmojiPicker.vue
+│   │   ├── Switch.vue
+│   │   ├── Tooltip.vue
+│   │   ├── Editable.vue
+│   │   └── BoardsSwitcher.vue
 ├── composables/
 │   ├── useWebSocket.ts
 │   ├── useMutator.ts
 │   ├── useHasPermissions.ts
 │   ├── useCalculations.ts
-│   └── useFlashMessage.ts
+│   ├── useFlashMessage.ts
+│   └── useSortable.ts
+├── utils/
+│   ├── csvExporter.ts
+│   └── cardFilter.ts
 └── App.vue
 ```
 
