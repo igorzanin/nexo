@@ -1,0 +1,26 @@
+{
+  "name": "nexo-import",
+  "version": "1.0.0",
+  "description": "CLI to import data from external services into nexo",
+  "private": true,
+  "bin": {
+    "nexo-import": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "commander": "^11.0.0",
+    "csv-parse": "^5.5.0",
+    "xml2js": "^0.6.2",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/xml2js": "^0.4.14",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.0"
+  }
+}

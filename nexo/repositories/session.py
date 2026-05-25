@@ -18,17 +18,17 @@ class SessionRepository:
         return self.db.execute(stmt).scalar_one_or_none()
 
     def get_by_user(self, user_id: str) -> list[Session]:
-        stmt = select(Session).where(Session.userId == user_id)
+        stmt = select(Session).where(Session.user_id == user_id)
         return list(self.db.execute(stmt).scalars().all())
 
     def create(self, user_id: str, token: str, expires_at: int) -> Session:
         now = int(time.time() * 1000)
         session = Session(
             token=token,
-            userId=user_id,
-            createAt=now,
-            updateAt=now,
-            expiresAt=expires_at,
+            user_id=user_id,
+            create_at=now,
+            last_active_time=now,
+            expire_at=expires_at,
         )
         self.db.add(session)
         self.db.commit()
@@ -45,7 +45,7 @@ class SessionRepository:
 
     def delete_expired(self) -> int:
         now = int(time.time() * 1000)
-        stmt = select(Session).where(Session.expiresAt < now)
+        stmt = select(Session).where(Session.expire_at < now)
         expired = list(self.db.execute(stmt).scalars().all())
         for s in expired:
             self.db.delete(s)

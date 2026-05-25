@@ -94,6 +94,7 @@ function convert(data: AsanaExport) {
     }
 
     const tasks = allTasks[project.id] || [];
+    let board = boards[boards.length - 1];
     for (const task of tasks) {
       const cardId = createGuid();
       const properties: Record<string, string | string[]> = {};

@@ -70,7 +70,7 @@ function convert(data: TodoistExport) {
       options: [] as { id: string; value: string; color: string }[],
     };
 
-    boards.push({
+    allBoards.push({
       id: boardId,
       teamId: "",
       channelId: "",
@@ -88,7 +88,7 @@ function convert(data: TodoistExport) {
       deleteAt: 0,
     });
 
-    blocks.push({
+    allBlocks.push({
       id: viewId,
       boardId,
       parentId: "",
@@ -123,7 +123,7 @@ function convert(data: TodoistExport) {
         if (optId) properties[propSection.id] = optId;
       }
 
-      blocks.push({
+      allBlocks.push({
         id: cardId,
         boardId,
         parentId: "",
@@ -143,7 +143,7 @@ function convert(data: TodoistExport) {
 
       if (task.description) {
         const textId = createGuid();
-        blocks.push({
+        allBlocks.push({
           id: textId,
           boardId,
           parentId: cardId,

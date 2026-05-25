@@ -19,28 +19,41 @@ class BoardService:
 
     def create(self, data: BoardCreate, user_id: str) -> Board:
         board = self.board_repo.create(data)
-        team_id = data.team_id
+        now = int(time.time() * 1000)
 
-        self.db.add(BoardMember(
-            boardId=board.id,
-            userId=user_id,
-            minimumRole=Role.ADMIN.value,
-            schemeAdmin=True,
-            schemeEditor=False,
-            schemeCommenter=False,
-            schemeViewer=False,
-        ))
+        self.db.add(
+            BoardMember(
+                board_id=board.id,
+                user_id=user_id,
+                roles=Role.ADMIN.value,
+                scheme_admin=True,
+                scheme_editor=False,
+                scheme_commenter=False,
+                scheme_viewer=False,
+                create_at=now,
+                update_at=now,
+                delete_at=0,
+            )
+        )
 
         categories = self.category_repo.get_by_user(user_id)
         default = next((c for c in categories if c.type == "system"), None)
         if default and not data.is_template:
             from nexo.models import CategoryBoard
-            self.db.add(CategoryBoard(
-                categoryId=default.id,
-                boardId=board.id,
-                sortOrder=0,
-                hidden=False,
-            ))
+
+            self.db.add(
+                CategoryBoard(
+                    user_id=user_id,
+                    team_id=board.team_id,
+                    category_id=default.id,
+                    board_id=board.id,
+                    sort_order=0,
+                    hide=False,
+                    create_at=now,
+                    update_at=now,
+                    delete_at=0,
+                )
+            )
 
         self.db.commit()
         self.db.refresh(board)
@@ -87,19 +100,18 @@ class BoardService:
 
         now = int(time.time() * 1000)
         dup = Board(
-            teamId=original.teamId,
-            channelId="",
+            team_id=original.team_id,
             type=original.type,
             title=f"{original.title} (copy)",
             description=original.description,
             icon=original.icon,
-            showDescription=original.showDescription,
-            isTemplate=False,
-            templateVersion=0,
-            minimumRole=original.minimumRole,
-            createAt=now,
-            updateAt=now,
-            deleteAt=0,
+            show_description=original.show_description,
+            is_template=False,
+            template_version=0,
+            minimum_role=original.minimum_role,
+            create_at=now,
+            update_at=now,
+            delete_at=0,
         )
         self.db.add(dup)
         self.db.commit()

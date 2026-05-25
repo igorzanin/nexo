@@ -17,11 +17,12 @@ class TeamRepository:
         return list(self.db.query(Team).all())
 
     def create(self, data: TeamCreate) -> Team:
+        now = int(time.time() * 1000)
         team = Team(
-            title=data.title,
-            signupToken=data.signupToken,
-            modifiedBy="",
-            updateAt=int(time.time() * 1000),
+            display_name=data.title,
+            create_at=now,
+            update_at=now,
+            delete_at=0,
         )
         self.db.add(team)
         self.db.commit()

@@ -1,0 +1,337 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-05-24T18:00:00-03:00",
+  "producedBy": "screen-translator",
+  "sourcePlatform": "react-spa",
+  "detectionConfidence": "confirmed",
+  "divergenceFromUiInventory": {
+    "totalInUiInventory": 15,
+    "totalInThisInventory": 15,
+    "matched": 15,
+    "missingInUiInventory": [],
+    "extraInUiInventory": [],
+    "divergencePercent": 0.0
+  },
+  "screens": [
+    {
+      "id": "SCR-001",
+      "canonicalName": "LoginPage",
+      "kind": "page",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#15",
+      "legacyOrigin": {
+        "file": "webapp/src/pages/login_page.tsx",
+        "line": null,
+        "paragraph": "LoginPage"
+      },
+      "interpolations": ["{{errorMessage}}"],
+      "transitions": ["HomePage (on success)", "RegisterPage (create an account link)"],
+      "tokens": ["color.primary", "color.danger", "layout.auth-card.width", "shadow.base", "spacing.3", "spacing.4", "font.weight.semibold"]
+    },
+    {
+      "id": "SCR-002",
+      "canonicalName": "RegisterPage",
+      "kind": "page",
+      "isCritical": true,
+      "matchesUiInventory": false,
+      "uiInventoryRef": null,
+      "legacyOrigin": {
+        "file": "webapp/src/pages/register_page.tsx",
+        "line": null,
+        "paragraph": "RegisterPage"
+      },
+      "interpolations": ["{{errorMessage}}"],
+      "transitions": ["LoginPage (already have account)", "HomePage (on success)"],
+      "tokens": ["color.primary", "color.danger", "layout.auth-card.width", "shadow.base", "spacing.3", "spacing.4"]
+    },
+    {
+      "id": "SCR-003",
+      "canonicalName": "HomePage",
+      "kind": "page",
+      "isCritical": true,
+      "matchesUiInventory": false,
+      "uiInventoryRef": null,
+      "legacyOrigin": {
+        "file": "webapp/src/pages/board_page.tsx",
+        "line": null,
+        "paragraph": "HomePage / BoardList"
+      },
+      "interpolations": ["{{teamName}}", "{{boards[]}}"],
+      "transitions": ["BoardPage (select board)", "CreateBoardModal (+ Add board)", "SettingsMenu (footer)"],
+      "tokens": ["layout.sidebar.width", "color.primary", "color.gray.100", "spacing.3"]
+    },
+    {
+      "id": "SCR-004",
+      "canonicalName": "BoardTableView",
+      "kind": "page",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#1",
+      "legacyOrigin": {
+        "file": "webapp/src/components/table/table.tsx",
+        "line": null,
+        "paragraph": "TableComponent"
+      },
+      "interpolations": ["{{boardTitle}}", "{{cards[]}}", "{{groupByProp}}", "{{properties[]}}"],
+      "transitions": ["CardDetailModal (click card)", "NewCardTemplateSelector (New ▾)", "GroupByDropdown", "PropertiesPanel", "ShareBoardModal", "ExportDropdown"],
+      "tokens": ["color.primary", "color.gray.200", "color.gray.300", "spacing.2", "spacing.3", "font.size.sm", "font.weight.semibold"]
+    },
+    {
+      "id": "SCR-005",
+      "canonicalName": "BoardKanbanView",
+      "kind": "page",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#2",
+      "legacyOrigin": {
+        "file": "webapp/src/components/kanban/kanban.tsx",
+        "line": null,
+        "paragraph": "KanbanComponent"
+      },
+      "interpolations": ["{{boardTitle}}", "{{columns[]}}", "{{cards[]}}", "{{groupByProp}}"],
+      "transitions": ["CardDetailModal (click card)", "NewCardTemplateSelector (New ▾)", "GroupByDropdown", "PropertiesPanel", "ShareBoardModal", "ExportDropdown"],
+      "tokens": ["color.primary", "color.gray.100", "color.gray.200", "shadow.sm", "spacing.2", "spacing.3", "radius.base"]
+    },
+    {
+      "id": "SCR-006",
+      "canonicalName": "CardDetailModal",
+      "kind": "modal",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#3",
+      "legacyOrigin": {
+        "file": "webapp/src/components/cardDetail/cardDetail.tsx",
+        "line": null,
+        "paragraph": "CardDetailModal"
+      },
+      "interpolations": ["{{card.title}}", "{{card.properties}}", "{{card.contents[]}}", "{{card.assignees[]}}", "{{card.comments[]}}", "{{card.status}}"],
+      "transitions": ["Board (close)", "PropertiesPanel (property click)"],
+      "tokens": ["color.primary", "color.gray.200", "color.gray.300", "zindex.modal", "zindex.modal-backdrop", "spacing.3", "spacing.4", "radius.base", "shadow.base"]
+    },
+    {
+      "id": "SCR-007",
+      "canonicalName": "NewCardTemplateSelector",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#4",
+      "legacyOrigin": {
+        "file": "webapp/src/components/newCardButton.tsx",
+        "line": null,
+        "paragraph": "NewCardTemplateDropdown"
+      },
+      "interpolations": ["{{templates[]}}"],
+      "transitions": ["CardDetailModal (select template)", "Board (cancel)"],
+      "tokens": ["color.white", "color.gray.200", "shadow.base", "zindex.dropdown", "spacing.2", "radius.base"]
+    },
+    {
+      "id": "SCR-008",
+      "canonicalName": "GroupByDropdown",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#5",
+      "legacyOrigin": {
+        "file": "webapp/src/components/viewHeader/viewHeaderGroupByMenu.tsx",
+        "line": null,
+        "paragraph": "GroupByMenu"
+      },
+      "interpolations": ["{{properties[]}}", "{{selectedProperty}}"],
+      "transitions": ["Board (apply grouping)"],
+      "tokens": ["color.white", "color.primary.active.bg", "color.gray.200", "shadow.base", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-009",
+      "canonicalName": "ShareBoardModal",
+      "kind": "modal",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#6",
+      "legacyOrigin": {
+        "file": "webapp/src/components/shareboard/shareBoard.tsx",
+        "line": null,
+        "paragraph": "ShareBoardModal"
+      },
+      "interpolations": ["{{board.title}}", "{{shareUrl}}", "{{isPublicSharing}}", "{{members[]}}", "{{searchResults[]}}"],
+      "transitions": ["Board (close modal)"],
+      "tokens": ["color.primary", "color.gray.200", "color.gray.300", "zindex.modal", "spacing.3", "spacing.4", "radius.base"]
+    },
+    {
+      "id": "SCR-010",
+      "canonicalName": "ExportDropdown",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#7",
+      "legacyOrigin": {
+        "file": "webapp/src/components/viewHeader/viewHeaderActionsMenu.tsx",
+        "line": null,
+        "paragraph": "ExportMenu"
+      },
+      "interpolations": [],
+      "transitions": ["Board (trigger export)", "Board (cancel)"],
+      "tokens": ["color.white", "color.gray.200", "shadow.base", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-011",
+      "canonicalName": "SettingsAppMenu",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#8",
+      "legacyOrigin": {
+        "file": "webapp/src/components/sidebar/sidebarSettingsMenu.tsx",
+        "line": null,
+        "paragraph": "SettingsMenu"
+      },
+      "interpolations": [],
+      "transitions": ["SettingsPage", "SetThemeSubmenu", "SetLanguageSubmenu"],
+      "tokens": ["color.white", "color.gray.200", "shadow.base", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-012",
+      "canonicalName": "CreateBoardModal",
+      "kind": "modal",
+      "isCritical": true,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#9",
+      "legacyOrigin": {
+        "file": "webapp/src/components/newBoardButton.tsx",
+        "line": null,
+        "paragraph": "CreateBoardModal"
+      },
+      "interpolations": ["{{templates[]}}", "{{selectedTemplate}}"],
+      "transitions": ["BoardPage (on create)", "Home (cancel)"],
+      "tokens": ["color.primary", "color.gray.200", "zindex.modal", "spacing.3", "spacing.4", "radius.base", "shadow.base"]
+    },
+    {
+      "id": "SCR-013",
+      "canonicalName": "PropertiesPanel",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#10",
+      "legacyOrigin": {
+        "file": "webapp/src/components/viewHeader/viewHeaderPropertiesMenu.tsx",
+        "line": null,
+        "paragraph": "PropertiesMenu"
+      },
+      "interpolations": ["{{properties[]}}", "{{visibleProperties[]}}", "{{hiddenProperties[]}}" ],
+      "transitions": ["Board (toggle property visibility)"],
+      "tokens": ["color.white", "color.primary", "color.gray.200", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-014",
+      "canonicalName": "SidebarCategoryContextMenu",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#11",
+      "legacyOrigin": {
+        "file": "webapp/src/components/sidebar/sidebarCategory.tsx",
+        "line": null,
+        "paragraph": "CategoryContextMenu"
+      },
+      "interpolations": ["{{category.name}}"],
+      "transitions": ["Board (rename)", "Board (delete)", "Board (move board)", "Board (cancel)"],
+      "tokens": ["color.white", "color.danger", "color.gray.200", "shadow.sm", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-015",
+      "canonicalName": "SetThemeSubmenu",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#12",
+      "legacyOrigin": {
+        "file": "webapp/src/components/sidebar/sidebarSettingsMenu.tsx",
+        "line": null,
+        "paragraph": "SetThemeSubmenu"
+      },
+      "interpolations": ["{{themes[]}}", "{{currentTheme}}"],
+      "transitions": ["SettingsMenu (back)", "App (apply theme)"],
+      "tokens": ["color.white", "color.primary.active.bg", "color.gray.200", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-016",
+      "canonicalName": "SetLanguageSubmenu",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#13",
+      "legacyOrigin": {
+        "file": "webapp/src/components/sidebar/sidebarSettingsMenu.tsx",
+        "line": null,
+        "paragraph": "SetLanguageSubmenu"
+      },
+      "interpolations": ["{{languages[]}}", "{{currentLanguage}}"],
+      "transitions": ["SettingsMenu (back)", "App (apply language)"],
+      "tokens": ["color.white", "color.primary.active.bg", "color.gray.200", "zindex.dropdown", "spacing.2"]
+    },
+    {
+      "id": "SCR-017",
+      "canonicalName": "UserAccountDropdown",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": true,
+      "uiInventoryRef": "#14",
+      "legacyOrigin": {
+        "file": "webapp/src/components/sidebar/userAccountMenu.tsx",
+        "line": null,
+        "paragraph": "UserAccountDropdown"
+      },
+      "interpolations": ["{{user.username}}", "{{user.email}}"],
+      "transitions": ["ChangePasswordPage", "InviteUsersPage", "LoginPage (log out)"],
+      "tokens": ["color.white", "color.gray.200", "color.danger", "zindex.dropdown", "spacing.2", "layout.avatar.size", "radius.circle"]
+    },
+    {
+      "id": "SCR-018",
+      "canonicalName": "ChangePasswordPage",
+      "kind": "page",
+      "isCritical": false,
+      "matchesUiInventory": false,
+      "uiInventoryRef": null,
+      "legacyOrigin": {
+        "file": "webapp/src/pages/change_password_page.tsx",
+        "line": null,
+        "paragraph": "ChangePasswordPage"
+      },
+      "interpolations": ["{{errorMessage}}"],
+      "transitions": ["LoginPage (success)", "UserAccountDropdown (cancel)"],
+      "tokens": ["color.primary", "color.danger", "layout.auth-card.width", "shadow.base", "spacing.3", "spacing.4"]
+    },
+    {
+      "id": "SCR-019",
+      "canonicalName": "FilterPanel",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": false,
+      "uiInventoryRef": null,
+      "legacyOrigin": {
+        "file": "webapp/src/components/viewHeader/filterComponent.tsx",
+        "line": null,
+        "paragraph": "FilterPanel"
+      },
+      "interpolations": ["{{filterGroup}}", "{{properties[]}}", "{{conditions[]}}", "{{activeFilters[]}}" ],
+      "transitions": ["Board (apply filter)", "Board (clear filters)"],
+      "tokens": ["color.white", "color.primary", "color.gray.200", "zindex.dropdown", "spacing.2", "spacing.3"]
+    },
+    {
+      "id": "SCR-020",
+      "canonicalName": "SortPanel",
+      "kind": "menu",
+      "isCritical": false,
+      "matchesUiInventory": false,
+      "uiInventoryRef": null,
+      "legacyOrigin": {
+        "file": "webapp/src/components/viewHeader/viewHeaderSortMenu.tsx",
+        "line": null,
+        "paragraph": "SortPanel"
+      },
+      "interpolations": ["{{sortOptions[]}}", "{{activeSorts[]}}" ],
+      "transitions": ["Board (apply sort)"],
+      "tokens": ["color.white", "color.primary", "color.gray.200", "zindex.dropdown", "spacing.2"]
+    }
+  ]
+}

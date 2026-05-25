@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session as DBSession
 
 from nexo.models import Block
+from nexo.models.block import BlockHistory
 from nexo.repositories.block import BlockRepository
 from nexo.schemas.block import BlockCreate, BlockUpdate
 
@@ -11,10 +12,6 @@ class BlockService:
         self.block_repo = BlockRepository(db)
 
     def create(self, data: BlockCreate, user_id: str) -> Block:
-        board_id = data.board_id
-        existing = self.db.get(Block, board_id)
-        if existing is None and board_id:
-            pass
         return self.block_repo.create(data, user_id)
 
     def get_blocks_for_board(self, board_id: str) -> list[Block]:
@@ -27,12 +24,38 @@ class BlockService:
         return block
 
     def delete(self, block_id: str) -> bool:
+        """Soft-delete block and archive snapshot to blocks_history."""
         return self.block_repo.soft_delete(block_id)
 
     def undelete(self, block_id: str) -> bool:
+        """Restore a soft-deleted block (re-activate from blocks_history)."""
         return self.block_repo.undelete(block_id)
 
-    def batch_create(self, blocks: list[Block]) -> list[Block]:
-        if len({b.boardId for b in blocks}) > 1:
+    def get_history(self, block_id: str) -> list[BlockHistory]:
+        return self.block_repo.get_history(block_id)
+
+    def batch_create(self, items: list[BlockCreate], user_id: str) -> list[Block]:
+        if not items:
+            return []
+        board_ids = {item.board_id for item in items}
+        if len(board_ids) > 1:
             raise ValueError("All blocks in batch must belong to the same board")
+        import time
+        now = int(time.time() * 1000)
+        blocks = [
+            Block(
+                board_id=item.board_id,
+                parent_id=item.parent_id or None,
+                created_by=user_id,
+                modified_by=user_id,
+                type=item.type.value if hasattr(item.type, "value") else item.type,
+                title=item.title,
+                fields=item.fields,
+                schema=item.schema,
+                create_at=now,
+                update_at=now,
+                delete_at=0,
+            )
+            for item in items
+        ]
         return self.block_repo.batch_create(blocks)

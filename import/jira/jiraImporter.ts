@@ -100,7 +100,8 @@ function convert(project: JiraProject) {
       propStatus.options.push({ id: createGuid(), value: issue.status[0], color: "propColorBlue" });
     }
     if (issue.status?.[0]) {
-      const opt = propStatus.options.find((o) => o.value === issue.status[0]);
+      const statusVal = issue.status[0];
+      const opt = propStatus.options.find((o) => o.value === statusVal);
       if (opt) properties[propStatus.id] = opt.id;
     }
 
@@ -109,7 +110,8 @@ function convert(project: JiraProject) {
       propPriority.options.push({ id: createGuid(), value: issue.priority[0], color: "propColorYellow" });
     }
     if (issue.priority?.[0]) {
-      const opt = propPriority.options.find((o) => o.value === issue.priority[0]);
+      const priorityVal = issue.priority[0];
+      const opt = propPriority.options.find((o) => o.value === priorityVal);
       if (opt) properties[propPriority.id] = opt.id;
     }
 
@@ -118,7 +120,8 @@ function convert(project: JiraProject) {
       propResolution.options.push({ id: createGuid(), value: issue.resolution[0], color: "propColorGray" });
     }
     if (issue.resolution?.[0]) {
-      const opt = propResolution.options.find((o) => o.value === issue.resolution[0]);
+      const resolutionVal = issue.resolution[0];
+      const opt = propResolution.options.find((o) => o.value === resolutionVal);
       if (opt) properties[propResolution.id] = opt.id;
     }
 

@@ -23,9 +23,9 @@ class CardService:
 
     def get_by_board(self, board_id: str) -> list[Block]:
         stmt = select(Block).where(
-            Block.boardId == board_id,
+            Block.board_id == board_id,
             Block.type == "card",
-            Block.deleteAt == 0,
+            Block.delete_at == 0,
         )
         return list(self.db.execute(stmt).scalars().all())
 
@@ -40,7 +40,7 @@ class CardService:
 
     def get_content_blocks(self, card_id: str) -> list[Block]:
         stmt = select(Block).where(
-            Block.parentId == card_id,
-            Block.deleteAt == 0,
+            Block.parent_id == card_id,
+            Block.delete_at == 0,
         )
         return list(self.db.execute(stmt).scalars().all())

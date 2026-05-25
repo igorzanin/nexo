@@ -3,7 +3,7 @@ import time
 
 from sqlalchemy.orm import Session as DBSession
 
-from nexo.models import Board, Block
+from nexo.models import Block, Board
 
 
 class ImportExportService:
@@ -19,39 +19,39 @@ class ImportExportService:
         board_data = {
             "type": "board",
             "id": board.id,
-            "teamId": board.teamId,
+            "teamId": board.team_id,
             "title": board.title,
             "description": board.description,
             "icon": board.icon,
             "type_flag": board.type,
-            "showDescription": board.showDescription,
-            "isTemplate": board.isTemplate,
-            "templateVersion": board.templateVersion,
-            "minimumRole": board.minimumRole,
-            "createAt": board.createAt,
-            "updateAt": board.updateAt,
+            "showDescription": board.show_description,
+            "isTemplate": board.is_template,
+            "templateVersion": board.template_version,
+            "minimumRole": board.minimum_role,
+            "createAt": board.create_at,
+            "updateAt": board.update_at,
         }
         lines.append(json.dumps(board_data, ensure_ascii=False))
 
         blocks = self.db.query(Block).filter(
-            Block.boardId == board_id,
-            Block.deleteAt == 0,
+            Block.board_id == board_id,
+            Block.delete_at == 0,
         ).all()
 
         for block in blocks:
             block_data = {
                 "type": "block",
                 "id": block.id,
-                "boardId": block.boardId,
-                "parentId": block.parentId,
-                "createdBy": block.createdBy,
-                "modifiedBy": block.modifiedBy,
+                "boardId": block.board_id,
+                "parentId": block.parent_id,
+                "createdBy": block.created_by,
+                "modifiedBy": block.modified_by,
                 "type_flag": block.type,
                 "title": block.title,
                 "fields": block.fields,
                 "schema": block.schema,
-                "createAt": block.createAt,
-                "updateAt": block.updateAt,
+                "createAt": block.create_at,
+                "updateAt": block.update_at,
             }
             lines.append(json.dumps(block_data, ensure_ascii=False))
 
@@ -68,19 +68,18 @@ class ImportExportService:
 
         now = int(time.time() * 1000)
         board = Board(
-            teamId=header.get("teamId", ""),
-            channelId="",
+            team_id=header.get("teamId", ""),
             type=header.get("type_flag", "P"),
             title=header.get("title", "Imported"),
             description=header.get("description", ""),
             icon=header.get("icon", ""),
-            showDescription=header.get("showDescription", False),
-            isTemplate=False,
-            templateVersion=0,
-            minimumRole=header.get("minimumRole", ""),
-            createAt=now,
-            updateAt=now,
-            deleteAt=0,
+            show_description=header.get("showDescription", False),
+            is_template=False,
+            template_version=0,
+            minimum_role=header.get("minimumRole", ""),
+            create_at=now,
+            update_at=now,
+            delete_at=0,
         )
         self.db.add(board)
         self.db.flush()
@@ -90,17 +89,17 @@ class ImportExportService:
             if item.get("type") == "block":
                 block = Block(
                     id=item.get("id", ""),
-                    boardId=board.id,
-                    parentId=item.get("parentId", ""),
-                    createdBy=user_id,
-                    modifiedBy=user_id,
+                    board_id=board.id,
+                    parent_id=item.get("parentId") or None,
+                    created_by=user_id,
+                    modified_by=user_id,
                     type=item.get("type_flag", "text"),
                     title=item.get("title", ""),
                     fields=item.get("fields", {}),
                     schema=item.get("schema", 1),
-                    createAt=item.get("createAt", now),
-                    updateAt=now,
-                    deleteAt=0,
+                    create_at=item.get("createAt", now),
+                    update_at=now,
+                    delete_at=0,
                 )
                 self.db.add(block)
 

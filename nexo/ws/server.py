@@ -94,7 +94,7 @@ class WSConnectionManager:
         try:
             board = BoardRepository(db).get(board_id)
             if board:
-                await self.broadcast_to_team(board.teamId, message)
+                await self.broadcast_to_team(board.team_id, message)
         finally:
             db.close()
 

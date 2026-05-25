@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 2,
+  "startedAt": "2026-05-24T16:41:57-03:00",
+  "lastCheckpoint": null,
+  "completedAgents": ["paradigm_advisor", "curator", "strategist", "designer", "screen_translator", "inspector"],
+  "pendingAgents": [],
+  "currentAgent": {
+    "agent": null,
+    "phase": null,
+    "status": "complete",
+    "topologyApproved": true,
+    "screenModeApproved": true
+  },
+  "pendingDecisions": [],
+  "artifacts": {
+    "migration_brief.md": {
+      "path": "_reversa_sdd/migration/migration_brief.md",
+      "producedBy": "orchestrator",
+      "createdAt": "2026-05-24T16:41:57-03:00"
+    },
+    "paradigm_decision.md": {
+      "path": "_reversa_sdd/migration/paradigm_decision.md",
+      "producedBy": "paradigm_advisor",
+      "createdAt": "2026-05-24T16:41:57-03:00"
+    },
+    "target_business_rules.md": {
+      "path": "_reversa_sdd/migration/target_business_rules.md",
+      "producedBy": "curator",
+      "createdAt": "2026-05-24T16:41:57-03:00"
+    },
+    "discard_log.md": {
+      "path": "_reversa_sdd/migration/discard_log.md",
+      "producedBy": "curator",
+      "createdAt": "2026-05-24T16:41:57-03:00"
+    },
+    "ambiguity_log.md": {
+      "path": "_reversa_sdd/migration/ambiguity_log.md",
+      "producedBy": "curator",
+      "createdAt": "2026-05-24T16:41:57-03:00"
+    },
+    "migration_strategy.md": {
+      "path": "_reversa_sdd/migration/migration_strategy.md",
+      "producedBy": "strategist",
+      "createdAt": "2026-05-24T17:05:00-03:00"
+    },
+    "risk_register.md": {
+      "path": "_reversa_sdd/migration/risk_register.md",
+      "producedBy": "strategist",
+      "createdAt": "2026-05-24T17:05:00-03:00"
+    },
+    "topology_decision.md": {
+      "path": "_reversa_sdd/migration/topology_decision.md",
+      "producedBy": "designer",
+      "createdAt": "2026-05-24T17:15:00-03:00"
+    },
+    "target_architecture.md": {
+      "path": "_reversa_sdd/migration/target_architecture.md",
+      "producedBy": "designer",
+      "createdAt": "2026-05-24T17:45:00-03:00"
+    },
+    "target_domain_model.md": {
+      "path": "_reversa_sdd/migration/target_domain_model.md",
+      "producedBy": "designer",
+      "createdAt": "2026-05-24T17:45:00-03:00"
+    },
+    "target_data_model.md": {
+      "path": "_reversa_sdd/migration/target_data_model.md",
+      "producedBy": "designer",
+      "createdAt": "2026-05-24T17:45:00-03:00"
+    },
+    "data_migration_plan.md": {
+      "path": "_reversa_sdd/migration/data_migration_plan.md",
+      "producedBy": "designer",
+      "createdAt": "2026-05-24T17:45:00-03:00"
+    },
+    "screen_modernization_decision.md": {
+      "path": "_reversa_sdd/migration/screen_modernization_decision.md",
+      "producedBy": "screen_translator",
+      "createdAt": "2026-05-24T18:05:00-03:00"
+    },
+    "target_screens.md": {
+      "path": "_reversa_sdd/migration/target_screens.md",
+      "producedBy": "screen_translator",
+      "createdAt": "2026-05-24T18:10:00-03:00"
+    },
+    "screen_deviation_log.md": {
+      "path": "_reversa_sdd/migration/screen_deviation_log.md",
+      "producedBy": "screen_translator",
+      "createdAt": "2026-05-24T18:10:00-03:00"
+    },
+    "screens/inventory.json": {
+      "path": "_reversa_sdd/screens/inventory.json",
+      "producedBy": "screen_translator",
+      "createdAt": "2026-05-24T18:05:00-03:00"
+    },
+    "screens/golden/manifest.yaml": {
+      "path": "_reversa_sdd/screens/golden/manifest.yaml",
+      "producedBy": "screen_translator",
+      "createdAt": "2026-05-24T18:10:00-03:00"
+    },
+    "parity_specs.md": {
+      "path": "_reversa_sdd/migration/parity_specs.md",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/01-auth.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/01-auth.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/02-board-lifecycle.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/02-board-lifecycle.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/03-block-crud.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/03-block-crud.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/04-permissions.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/04-permissions.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/05-sharing.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/05-sharing.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/06-websocket.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/06-websocket.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/07-import-export.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/07-import-export.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "parity_tests/08-screen-contracts.feature": {
+      "path": "_reversa_sdd/migration/parity_tests/08-screen-contracts.feature",
+      "producedBy": "inspector",
+      "createdAt": "2026-05-24T18:30:00-03:00"
+    },
+    "handoff.md": {
+      "path": "_reversa_sdd/migration/handoff.md",
+      "producedBy": "orchestrator",
+      "createdAt": "2026-05-24T18:45:00-03:00"
+    }
+  },
+  "auto": false,
+  "engine": "claude-sonnet-4.6",
+  "reversaVersion": "1.0.0",
+  "briefPath": "_reversa_sdd/migration/migration_brief.md",
+  "expectedLegacyArtifacts": "references/expected_legacy_artifacts.yaml"
+}

@@ -33,6 +33,21 @@ async def create_block(
     return BlockResponse.model_validate(block, from_attributes=True)
 
 
+@router.post("/blocks/batch", response_model=list[BlockResponse])
+async def batch_create_blocks(
+    board_id: str,
+    items: list[BlockCreate],
+    user: User = Depends(get_current_user),
+    db: DBSession = Depends(get_db),
+):
+    svc = BlockService(db)
+    try:
+        blocks = svc.batch_create(items, user.id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return [BlockResponse.model_validate(b, from_attributes=True) for b in blocks]
+
+
 @router.patch("/blocks/{block_id}", response_model=BlockResponse)
 async def patch_block(
     board_id: str,

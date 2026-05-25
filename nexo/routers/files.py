@@ -24,8 +24,21 @@ async def upload_file(
     if len(content) > settings.max_file_size:
         raise HTTPException(status_code=413, detail="File too large")
     svc = FileService()
-    file_id, ext, size = svc.store_file(board_id, file)
-    return {"fileId": file_id, "extension": ext, "size": size, "boardId": board_id}
+    file_id, ext, size = svc.store_file(board_id, file, content)
+    svc.persist_metadata(
+        db=db,
+        file_id=file_id,
+        board_id=board_id,
+        creator_id=user.id,
+        name=file.filename or file_id,
+        extension=ext,
+        size=size,
+        mime_type=file.content_type,
+    )
+    url = f"/api/v1/files/{team_id}/{board_id}/{file_id}"
+    if ext:
+        url += f"?ext={ext}"
+    return {"fileId": file_id, "extension": ext, "size": size, "boardId": board_id, "url": url}
 
 
 @router.get("/files/{team_id}/{board_id}/{file_id}")

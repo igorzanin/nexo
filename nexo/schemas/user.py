@@ -35,6 +35,6 @@ class UserResponse(BaseModel):
     id: str
     username: str
     email: str
-    createAt: int
-    updateAt: int
-    deleteAt: int
+    create_at: int
+    update_at: int
+    delete_at: int

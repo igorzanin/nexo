@@ -1,3 +1,6 @@
+import secrets
+import time
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DBSession
 
@@ -16,15 +19,26 @@ class SharingRepository:
         stmt = select(Sharing).where(Sharing.token == token, Sharing.enabled == True)
         return self.db.execute(stmt).scalar_one_or_none()
 
-    def upsert(self, board_id: str, data: SharingCreate) -> Sharing:
+    def upsert(self, board_id: str, data: SharingCreate, modified_by: str | None = None) -> Sharing:
+        now = int(time.time() * 1000)
+        token = data.token if data.token else secrets.token_urlsafe(32)
         existing = self.get(board_id)
         if existing:
             existing.enabled = data.enabled
-            existing.token = data.token
+            existing.token = token
+            existing.modified_by = modified_by
+            existing.update_at = now
             self.db.commit()
             self.db.refresh(existing)
             return existing
-        sharing = Sharing(id=board_id, enabled=data.enabled, token=data.token)
+        sharing = Sharing(
+            id=board_id,
+            enabled=data.enabled,
+            token=token,
+            modified_by=modified_by,
+            create_at=now,
+            update_at=now,
+        )
         self.db.add(sharing)
         self.db.commit()
         self.db.refresh(sharing)

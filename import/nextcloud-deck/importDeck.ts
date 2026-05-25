@@ -219,7 +219,7 @@ async function main() {
   const baseUrl = (args.url || args.baseUrl) as string;
   const username = (args.u || args.user) as string;
   const password = (args.p || args.pass || args.password) as string;
-  const boardId = parseInt(args.b || args.boardId as string, 10);
+  const boardId = parseInt((args.b || args.boardId) as string, 10);
   const outputFile = (args.o || args.output || "archive.boardarchive") as string;
 
   if (!baseUrl || !username || !password || !boardId) {

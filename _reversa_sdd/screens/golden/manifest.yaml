@@ -1,0 +1,108 @@
+schemaVersion: 1
+generatedAt: "2026-05-24T18:10:00-03:00"
+producedBy: screen-translator
+note: |
+  Oráculo legado (React 17 + Focalboard) não está disponível para execução automatizada.
+  Golden files não foram capturados automaticamente (v2 feature OQ-02).
+  Execute os comandos abaixo manualmente quando o ambiente legado estiver disponível.
+screens:
+  - id: SCR-001
+    canonicalName: LoginPage
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-002
+    canonicalName: RegisterPage
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-003
+    canonicalName: HomePage
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-004
+    canonicalName: BoardTableView
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-005
+    canonicalName: BoardKanbanView
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-006
+    canonicalName: CardDetailModal
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-007
+    canonicalName: NewCardTemplateSelector
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-008
+    canonicalName: GroupByDropdown
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-009
+    canonicalName: ShareBoardModal
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-010
+    canonicalName: ExportDropdown
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-011
+    canonicalName: SettingsAppMenu
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-012
+    canonicalName: CreateBoardModal
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-013
+    canonicalName: PropertiesPanel
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-014
+    canonicalName: SidebarCategoryContextMenu
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-015
+    canonicalName: SetThemeSubmenu
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-016
+    canonicalName: SetLanguageSubmenu
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-017
+    canonicalName: UserAccountDropdown
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-018
+    canonicalName: ChangePasswordPage
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-019
+    canonicalName: FilterPanel
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required
+  - id: SCR-020
+    canonicalName: SortPanel
+    captureCommand: "# Não aplicável — sistema novo não tem oráculo React executável"
+    goldenFile: null
+    captureStatus: manual_required

@@ -1,5 +1,7 @@
 import time
 
+import time
+
 from sqlalchemy.orm import Session as DBSession
 
 from nexo.models import CategoryBoard
@@ -38,35 +40,54 @@ class CategoryService:
         default = next((c for c in categories if c.type == "system"), None)
         if default:
             existing = self.db.query(CategoryBoard).filter(
-                CategoryBoard.categoryId == default.id,
-                CategoryBoard.boardId == board_id,
+                CategoryBoard.category_id == default.id,
+                CategoryBoard.board_id == board_id,
             ).first()
             if not existing:
-                self.db.add(CategoryBoard(
-                    categoryId=default.id,
-                    boardId=board_id,
-                    sortOrder=0,
-                    hidden=False,
-                ))
+                now = int(time.time() * 1000)
+                self.db.add(
+                    CategoryBoard(
+                        user_id=default.user_id,
+                        team_id=default.team_id,
+                        category_id=default.id,
+                        board_id=board_id,
+                        sort_order=0,
+                        hide=False,
+                        create_at=now,
+                        update_at=now,
+                        delete_at=0,
+                    )
+                )
                 self.db.commit()
 
     def add_board_to_category(self, category_id: str, board_id: str, sort_order: int = 0) -> None:
         existing = self.db.query(CategoryBoard).filter(
-            CategoryBoard.categoryId == category_id,
-            CategoryBoard.boardId == board_id,
+            CategoryBoard.category_id == category_id,
+            CategoryBoard.board_id == board_id,
         ).first()
         if not existing:
-            self.db.add(CategoryBoard(
-                categoryId=category_id,
-                boardId=board_id,
-                sortOrder=sort_order,
-                hidden=False,
-            ))
+            category = self.category_repo.get(category_id)
+            if category is None:
+                raise ValueError("Category not found")
+            now = int(time.time() * 1000)
+            self.db.add(
+                CategoryBoard(
+                    user_id=category.user_id,
+                    team_id=category.team_id,
+                    category_id=category_id,
+                    board_id=board_id,
+                    sort_order=sort_order,
+                    hide=False,
+                    create_at=now,
+                    update_at=now,
+                    delete_at=0,
+                )
+            )
             self.db.commit()
 
     def remove_board_from_category(self, category_id: str, board_id: str) -> None:
         self.db.query(CategoryBoard).filter(
-            CategoryBoard.categoryId == category_id,
-            CategoryBoard.boardId == board_id,
+            CategoryBoard.category_id == category_id,
+            CategoryBoard.board_id == board_id,
         ).delete()
         self.db.commit()

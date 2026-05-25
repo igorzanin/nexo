@@ -1,11 +1,11 @@
 import time
 
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session as DBSession
 
+from nexo.auth.password import hash_password
 from nexo.models import User
 from nexo.schemas.user import UserCreate, UserUpdate
-from nexo.auth.password import hash_password
 
 
 class UserRepository:
@@ -16,17 +16,17 @@ class UserRepository:
         return self.db.get(User, user_id)
 
     def get_by_username(self, username: str) -> User | None:
-        stmt = select(User).where(User.username == username, User.deleteAt == 0)
+        stmt = select(User).where(User.username == username, User.delete_at == 0)
         return self.db.execute(stmt).scalar_one_or_none()
 
     def get_by_email(self, email: str) -> User | None:
-        stmt = select(User).where(User.email == email, User.deleteAt == 0)
+        stmt = select(User).where(User.email == email, User.delete_at == 0)
         return self.db.execute(stmt).scalar_one_or_none()
 
     def get_by_login(self, login: str) -> User | None:
         stmt = select(User).where(
             or_(User.username == login, User.email == login),
-            User.deleteAt == 0,
+            User.delete_at == 0,
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
@@ -35,10 +35,10 @@ class UserRepository:
         user = User(
             username=data.username,
             email=data.email,
-            password=hash_password(data.password),
-            createAt=now,
-            updateAt=now,
-            deleteAt=0,
+            password_hash=hash_password(data.password),
+            create_at=now,
+            update_at=now,
+            delete_at=0,
         )
         self.db.add(user)
         self.db.commit()
@@ -52,10 +52,10 @@ class UserRepository:
         now = int(time.time() * 1000)
         patch = data.model_dump(exclude_unset=True)
         if "password" in patch:
-            patch["password"] = hash_password(patch["password"])
+            patch["password_hash"] = hash_password(patch.pop("password"))
         for key, value in patch.items():
             setattr(user, key, value)
-        user.updateAt = now
+        user.update_at = now
         self.db.commit()
         self.db.refresh(user)
         return user
@@ -64,6 +64,6 @@ class UserRepository:
         user = self.get(user_id)
         if not user:
             return False
-        user.deleteAt = int(time.time() * 1000)
+        user.delete_at = int(time.time() * 1000)
         self.db.commit()
         return True

@@ -1,3 +1,5 @@
+import time
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DBSession
 
@@ -9,27 +11,30 @@ class SubscriptionRepository:
         self.db = db
 
     def get(self, block_id: str, subscriber_id: str) -> Subscription | None:
-        return self.db.get(Subscription, (block_id, subscriber_id))
+        stmt = select(Subscription).where(
+            Subscription.block_id == block_id,
+            Subscription.subscriber_id == subscriber_id,
+        )
+        return self.db.execute(stmt).scalar_one_or_none()
 
     def get_by_subscriber(self, subscriber_id: str) -> list[Subscription]:
-        stmt = select(Subscription).where(Subscription.subscriberId == subscriber_id)
+        stmt = select(Subscription).where(Subscription.subscriber_id == subscriber_id)
         return list(self.db.execute(stmt).scalars().all())
 
     def get_by_block(self, block_id: str) -> list[Subscription]:
-        stmt = select(Subscription).where(Subscription.blockId == block_id)
+        stmt = select(Subscription).where(Subscription.block_id == block_id)
         return list(self.db.execute(stmt).scalars().all())
 
     def create(self, block_id: str, subscriber_id: str, subscriber_type: str = "user") -> Subscription:
-        import time
-
         now = int(time.time() * 1000)
+        subscriber_type_value = subscriber_type.value if hasattr(subscriber_type, "value") else subscriber_type
         sub = Subscription(
-            blockId=block_id,
-            subscriberId=subscriber_id,
-            subscriberType=subscriber_type,
-            createAt=now,
-            notifyAt=now,
-            updateAt=now,
+            block_type="block",
+            block_id=block_id,
+            subscriber_id=subscriber_id,
+            subscriber_type=subscriber_type_value,
+            create_at=now,
+            publish_at=now,
         )
         self.db.add(sub)
         self.db.commit()

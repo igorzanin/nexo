@@ -2,6 +2,7 @@ import warnings
 from typing import Optional, Any
 
 from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic.alias_generators import to_camel
 
 from nexo.models.enums import BlockType
 
@@ -59,20 +60,24 @@ class BlockUpdate(BaseModel):
 
 
 class BlockResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=to_camel,
+    )
 
     id: str
-    boardId: str
-    parentId: str
-    createdBy: str
-    modifiedBy: str
+    board_id: str
+    parent_id: Optional[str] = None
+    created_by: Optional[str] = None
+    modified_by: Optional[str] = None
     type: str
-    title: str
-    fields: dict
-    schema: int
-    createAt: int
-    updateAt: int
-    deleteAt: int
+    title: str = ""
+    fields: dict = {}
+    schema: int = 1
+    create_at: int = 0
+    update_at: int = 0
+    delete_at: int = 0
 
     @field_validator("type", mode="before")
     @classmethod

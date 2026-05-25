@@ -17,7 +17,7 @@ async def create_subscription(
     db: DBSession = Depends(get_db),
 ):
     repo = SubscriptionRepository(db)
-    sub = repo.create(data.blockId, data.subscriberId, data.subscriberType)
+    sub = repo.create(data.block_id, data.subscriber_id, data.subscriber_type)
     return SubscriptionResponse.model_validate(sub, from_attributes=True)
 
 
