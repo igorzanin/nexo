@@ -11,7 +11,7 @@
       <div
         v-for="comment in comments"
         :key="comment.id"
-        class="p-2 rounded border bg-light"
+        class="p-2 rounded border bg-body-secondary"
       >
         <div class="d-flex align-items-center justify-content-between mb-1">
           <span class="small fw-semibold text-primary">{{ comment.createdBy }}</span>

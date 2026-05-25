@@ -158,4 +158,13 @@ export async function changePassword(userId: string, oldPassword: string, newPas
   });
 }
 
+export async function uploadFile(teamId: string, boardId: string, file: File): Promise<{ url: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await api.post(`/files/${teamId}/${boardId}`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return toCamel(res.data) as { url: string };
+}
+
 export { api as client };

@@ -113,7 +113,7 @@ async function onCardMove(evt: any, targetColumnId: string) {
         @add-card="emit('addCard', col.id)"
       >
         <template #cards>
-          <div class="px-2 py-1 border-bottom bg-white small text-muted d-flex gap-2" style="font-size: 10px;">
+          <div class="px-2 py-1 border-bottom bg-body small text-muted d-flex gap-2" style="font-size: 10px;">
             <span>{{ col.cards.length }} cards</span>
           </div>
           <draggable

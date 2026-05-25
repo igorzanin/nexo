@@ -34,7 +34,8 @@ function cancel() {
   <span>
     <span v-if="!editing" style="cursor: pointer;" @click="startEdit">
       <slot name="display" :value="modelValue">
-        {{ modelValue || <span class="text-muted">{{ placeholder || "Click to edit" }}</span> }}
+        <template v-if="modelValue">{{ modelValue }}</template>
+        <span v-else class="text-muted">{{ placeholder || "Click to edit" }}</span>
       </slot>
     </span>
     <input

@@ -38,7 +38,7 @@ function skip() {
 </script>
 
 <template>
-  <div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+  <div class="d-flex align-items-center justify-content-center vh-100 bg-body-secondary">
     <div class="card shadow" style="width: 560px;">
       <div class="card-body p-5 text-center">
         <div class="d-flex justify-content-center gap-1 mb-4">
@@ -53,9 +53,7 @@ function skip() {
           <i class="bi bi-kanban fs-1 text-primary mb-3 d-block"></i>
           <h4 class="card-title">Welcome to Nexo</h4>
           <p class="text-muted small">Boards are where you organize your work. Create a board for your project, team, or personal tasks.</p>
-          <div class="border rounded p-4 bg-white text-start mb-3">
-            <div class="d-flex align-items-center gap-3">
-              <i class="bi bi-kanban fs-3 text-primary"></i>
+          <div class="border rounded p-4 bg-body text-start mb-3">
               <div>
                 <strong>Board</strong>
                 <p class="small text-muted mb-0">A board contains cards organized in views like Kanban, Table, or Calendar.</p>
@@ -68,7 +66,7 @@ function skip() {
           <i class="bi bi-card-text fs-1 text-primary mb-3 d-block"></i>
           <h4 class="card-title">Create Cards</h4>
           <p class="text-muted small">Cards represent tasks, ideas, or items. Add properties, descriptions, comments, and attachments.</p>
-          <div class="border rounded p-4 bg-white text-start mb-3">
+          <div class="border rounded p-4 bg-body text-start mb-3">
             <div class="d-flex align-items-center gap-3">
               <i class="bi bi-list-columns fs-3 text-primary"></i>
               <div>
@@ -83,7 +81,7 @@ function skip() {
           <i class="bi bi-share fs-1 text-primary mb-3 d-block"></i>
           <h4 class="card-title">Share with Your Team</h4>
           <p class="text-muted small">Invite team members to collaborate on boards in real-time.</p>
-          <div class="border rounded p-4 bg-white text-start mb-3">
+          <div class="border rounded p-4 bg-body text-start mb-3">
             <div class="d-flex align-items-center gap-3">
               <i class="bi bi-people fs-3 text-primary"></i>
               <div>

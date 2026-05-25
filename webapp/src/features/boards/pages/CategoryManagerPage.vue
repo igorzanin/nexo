@@ -133,7 +133,7 @@ async function deleteCategory(id: string, name: string) {
           <!-- View mode -->
           <template v-else>
             <span class="flex-grow-1 small">{{ cat.name }}</span>
-            <span class="badge bg-light text-secondary border small">{{ cat.type }}</span>
+            <span class="badge bg-secondary-subtle text-secondary border small">{{ cat.type }}</span>
             <button class="btn btn-outline-secondary btn-sm" @click="startEdit(cat.id, cat.name)">
               Rename
             </button>

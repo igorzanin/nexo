@@ -40,7 +40,7 @@ async function createBoard() {
       </div>
     </div>
     <CenterPanel v-else-if="boardId || boardStore.current" :board-id="boardId || boardStore.current" />
-    <div v-else class="d-flex flex-column align-items-center justify-content-center flex-grow-1 bg-light">
+    <div v-else class="d-flex flex-column align-items-center justify-content-center flex-grow-1 bg-body-secondary">
       <h2 class="mb-3">Welcome to Nexo</h2>
       <p class="text-muted mb-4">Create your first board to get started.</p>
       <button class="btn btn-primary btn-lg" :disabled="loading" @click="createBoard">

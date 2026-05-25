@@ -41,7 +41,8 @@ function formatDate(val: string): string {
 <template>
   <div>
     <div v-if="!editing" class="small" style="cursor: pointer;" @click="startEdit">
-      {{ formatDate(modelValue) || <span class="text-muted">No date</span> }}
+      <template v-if="formatDate(modelValue)">{{ formatDate(modelValue) }}</template>
+      <span v-else class="text-muted">No date</span>
     </div>
     <input
       v-else

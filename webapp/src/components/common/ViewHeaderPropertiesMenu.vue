@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import type { IPropertyTemplate } from "../../types/board";
 
 const props = defineProps<{
@@ -12,36 +11,30 @@ const emit = defineEmits<{
   (e: "addProperty"): void;
 }>();
 
-const isOpen = ref(false);
-
-function toggle() {
-  isOpen.value = !isOpen.value;
-}
-
 function isVisible(id: string) {
   return props.visibleProperties.includes(id);
 }
 </script>
 
 <template>
-  <div class="position-relative">
-    <button class="btn btn-sm btn-outline-secondary border-0" @click="toggle">
+  <div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary border-0 dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
       <i class="bi bi-list-columns"></i>
     </button>
-    <div v-if="isOpen" class="position-absolute start-0 mt-1 bg-white border rounded shadow-sm" style="z-index: 100; min-width: 220px;">
-      <div class="px-3 py-1 small fw-semibold text-muted">Properties</div>
-      <div v-for="prop in properties" :key="prop.id" class="px-3 py-1 small d-flex align-items-center">
+    <div class="dropdown-menu" style="min-width: 220px;">
+      <h6 class="dropdown-header">Properties</h6>
+      <label v-for="prop in properties" :key="prop.id" class="dropdown-item d-flex align-items-center py-1">
         <input
           type="checkbox"
           class="form-check-input me-2"
           :checked="isVisible(prop.id)"
           @change="emit('toggleProperty', prop.id)"
         />
-        {{ prop.name }}
-        <span class="badge bg-secondary bg-opacity-10 text-muted ms-auto" style="font-size: 9px;">{{ prop.type }}</span>
-      </div>
-      <hr class="my-1">
-      <button class="dropdown-item small py-1 px-3" @click="emit('addProperty')">
+        <span class="flex-grow-1">{{ prop.name }}</span>
+        <span class="badge bg-secondary bg-opacity-10 text-muted ms-2" style="font-size: 9px;">{{ prop.type }}</span>
+      </label>
+      <hr class="dropdown-divider">
+      <button class="dropdown-item" @click="emit('addProperty')">
         <i class="bi bi-plus me-1"></i> Add property
       </button>
     </div>

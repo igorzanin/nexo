@@ -49,6 +49,7 @@ class BoardResponse(BaseModel):
     is_template: bool = False
     template_version: int = 0
     minimum_role: str = ""
+    card_properties: Optional[Any] = None
     create_at: int = 0
     update_at: int = 0
     delete_at: int = 0

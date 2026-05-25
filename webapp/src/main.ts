@@ -3,6 +3,15 @@ import { pinia } from "./stores";
 import router from "./router";
 import App from "./App.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "./assets/nexo-theme.css";
+import "bootstrap";
+
+// Restore persisted theme before first render
+const savedTheme = localStorage.getItem("nexo-theme");
+if (savedTheme && savedTheme !== "default") {
+  document.documentElement.setAttribute("data-bs-theme", savedTheme);
+}
 
 const app = createApp(App);
 app.use(pinia);

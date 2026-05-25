@@ -63,6 +63,7 @@ async function createBoard(useTemplate: boolean) {
 </script>
 
 <template>
+  <Teleport to="#app-modal">
   <div class="modal fade show d-block" style="z-index: 1055;" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
@@ -122,4 +123,5 @@ async function createBoard(useTemplate: boolean) {
     </div>
   </div>
   <div class="modal-backdrop fade show" style="z-index: 1050;" @click="emit('close')"></div>
+  </Teleport>
 </template>

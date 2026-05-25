@@ -12,48 +12,43 @@ const emit = defineEmits<{
   (e: "save"): void;
 }>();
 
-const isOpen = ref(false);
-
 const selected = ref(props.options.find((o) => o.id === props.modelValue));
 
 function select(opt: IPropertyOption) {
   selected.value = opt;
   emit("update:modelValue", opt.id);
   emit("save");
-  isOpen.value = false;
 }
 
 function clear() {
   selected.value = undefined;
   emit("update:modelValue", "");
   emit("save");
-  isOpen.value = false;
 }
 </script>
 
 <template>
-  <div class="position-relative">
-    <div class="small d-flex align-items-center gap-1" style="cursor: pointer;" @click="isOpen = !isOpen">
+  <div class="dropdown">
+    <div class="small d-flex align-items-center gap-1" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
       <span v-if="selected" class="badge" :style="{ backgroundColor: selected.color || '#ccc' }">
         {{ selected.value }}
       </span>
       <span v-else class="text-muted">Empty</span>
       <i class="bi bi-chevron-down ms-auto" style="font-size: 10px;"></i>
     </div>
-    <div v-if="isOpen" class="position-absolute start-0 mt-1 bg-white border rounded shadow-sm" style="z-index: 100; min-width: 160px;">
-      <button class="dropdown-item small py-1 px-3 text-muted" @click="clear">
-        <i class="bi bi-x me-1"></i> Empty
-      </button>
-      <button
-        v-for="opt in options"
-        :key="opt.id"
-        class="dropdown-item small py-1 px-3 d-flex align-items-center gap-2"
-        @click="select(opt)"
-      >
-        <span class="rounded-circle d-inline-block" :style="{ backgroundColor: opt.color, width: 8, height: 8 }"></span>
-        {{ opt.value }}
-        <i v-if="selected?.id === opt.id" class="bi bi-check ms-auto text-primary"></i>
-      </button>
-    </div>
+    <ul class="dropdown-menu">
+      <li>
+        <button class="dropdown-item small py-1 text-muted" @click="clear">
+          <i class="bi bi-x me-1"></i> Empty
+        </button>
+      </li>
+      <li v-for="opt in options" :key="opt.id">
+        <button class="dropdown-item small py-1 d-flex align-items-center gap-2" @click="select(opt)">
+          <span class="rounded-circle d-inline-block flex-shrink-0" :style="{ backgroundColor: opt.color, width: '8px', height: '8px' }"></span>
+          {{ opt.value }}
+          <i v-if="selected?.id === opt.id" class="bi bi-check ms-auto text-primary"></i>
+        </button>
+      </li>
+    </ul>
   </div>
 </template>

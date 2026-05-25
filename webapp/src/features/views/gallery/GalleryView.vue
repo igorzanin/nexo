@@ -1,7 +1,7 @@
 <template>
   <div class="gallery-view d-flex flex-column h-100">
     <!-- Toolbar -->
-    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-light">
+    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-body-secondary">
       <button class="btn btn-sm btn-outline-secondary" @click="showFilter = !showFilter">
         <i class="bi bi-funnel" /> Filter
         <span v-if="filterClauses.length" class="badge bg-secondary ms-1">{{ filterClauses.length }}</span>

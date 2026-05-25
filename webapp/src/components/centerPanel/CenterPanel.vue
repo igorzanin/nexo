@@ -76,7 +76,7 @@ const currentGroupBy = computed(() => activeView.value?.fields?.groupById || nul
       @switch-view-type="async (type) => { if (activeView) { const patch = { fields: { ...activeView.fields, viewType: type } }; await mutator.patchBlock(board.id, activeView.id, patch, {} as any); } }"
     />
 
-    <div v-if="!board" class="d-flex align-items-center justify-content-center flex-grow-1 bg-light">
+    <div v-if="!board" class="d-flex align-items-center justify-content-center flex-grow-1 bg-body-secondary">
       <div class="text-center text-muted">
         <h5>Board not found</h5>
         <p class="small">Select a board from the sidebar.</p>
@@ -125,7 +125,7 @@ const currentGroupBy = computed(() => activeView.value?.fields?.groupById || nul
           style="cursor: pointer;"
           @click="openCard(card.id)"
         >
-          <div class="card shadow-sm h-100 border-0 bg-light">
+          <div class="card shadow-sm h-100 border-0 bg-body-secondary">
             <div class="card-body p-2">
               <h6 class="card-title small mb-0 text-truncate">{{ card.title || "Untitled" }}</h6>
             </div>

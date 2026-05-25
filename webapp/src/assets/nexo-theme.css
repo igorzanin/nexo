@@ -1,27 +1,28 @@
 /*
  * Nexo Theme — customiza Bootstrap 5.3 via CSS Custom Properties
- * Paleta derivada do Focalboard legado: sidebar #1e2a3a, primary #0d6efd
+ * Usa apenas var(--bs-*) adaptativos — funciona com data-bs-theme="light" e "dark".
  */
 
-/* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+/* ───── Sidebar ─────────────────────────────────────────────────────────────── */
 .nexo-sidebar {
-  background-color: #1e2a3a;
-  color: #c8d3e0;
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  border-right: 1px solid var(--bs-border-color);
 }
 
 .nexo-sidebar .nexo-sidebar-brand {
-  color: #ffffff;
+  color: var(--bs-body-color);
   font-weight: 700;
   font-size: 1rem;
 }
 
 .nexo-sidebar .nexo-sidebar-team {
-  color: #8a9bae;
+  color: var(--bs-secondary-color);
   font-size: 0.8125rem;
 }
 
 .nexo-sidebar .nexo-sidebar-section-label {
-  color: #8a9bae;
+  color: var(--bs-secondary-color);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -34,7 +35,7 @@
   gap: 0.5rem;
   padding: 0.375rem 0.5rem;
   border-radius: 0.375rem;
-  color: #c8d3e0;
+  color: var(--bs-body-color);
   font-size: 0.875rem;
   cursor: pointer;
   border: none;
@@ -45,13 +46,13 @@
 }
 
 .nexo-sidebar .nexo-board-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
 }
 
 .nexo-sidebar .nexo-board-item.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background-color: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary);
   font-weight: 600;
 }
 
@@ -61,17 +62,17 @@
   justify-content: space-between;
   padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
-  color: #8a9bae;
+  color: var(--bs-secondary-color);
   font-size: 0.8125rem;
 }
 
 .nexo-sidebar .nexo-category-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #c8d3e0;
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
 }
 
 .nexo-sidebar .nexo-sidebar-add-btn {
-  color: #8a9bae;
+  color: var(--bs-secondary-color);
   background: transparent;
   border: none;
   padding: 0;
@@ -82,38 +83,14 @@
 }
 
 .nexo-sidebar .nexo-sidebar-add-btn:hover {
-  color: #ffffff;
+  color: var(--bs-primary);
 }
 
 .nexo-sidebar .nexo-sidebar-divider {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--bs-border-color);
 }
 
-/* Footer buttons dentro da sidebar escura */
-.nexo-sidebar .btn-outline-secondary {
-  --bs-btn-color: #c8d3e0;
-  --bs-btn-border-color: rgba(255, 255, 255, 0.15);
-  --bs-btn-hover-color: #ffffff;
-  --bs-btn-hover-bg: rgba(255, 255, 255, 0.1);
-  --bs-btn-hover-border-color: rgba(255, 255, 255, 0.25);
-  --bs-btn-active-color: #ffffff;
-  --bs-btn-active-bg: rgba(255, 255, 255, 0.15);
-}
-
-.nexo-sidebar .dropdown-menu {
-  --bs-dropdown-bg: #253346;
-  --bs-dropdown-color: #c8d3e0;
-  --bs-dropdown-link-color: #c8d3e0;
-  --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.08);
-  --bs-dropdown-link-hover-color: #ffffff;
-  --bs-dropdown-link-active-bg: rgba(255, 255, 255, 0.15);
-  --bs-dropdown-link-active-color: #ffffff;
-  --bs-dropdown-divider-bg: rgba(255, 255, 255, 0.1);
-  --bs-dropdown-header-color: #8a9bae;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ─── Toolbar / View header ───────────────────────────────────────────────── */
+/* ───── Toolbar / View header ───────────────────────────────────────────────── */
 .nexo-toolbar {
   background-color: var(--bs-body-bg);
   border-bottom: 1px solid var(--bs-border-color);
@@ -130,7 +107,7 @@
   --bs-btn-padding-x: 0.625rem;
 }
 
-/* ─── Kanban board ────────────────────────────────────────────────────────── */
+/* ───── Kanban board ────────────────────────────────────────────────────────── */
 .nexo-kanban-area {
   display: flex;
   gap: 1rem;
@@ -192,7 +169,7 @@
   color: var(--bs-body-color);
 }
 
-/* ─── Auth pages ──────────────────────────────────────────────────────────── */
+/* ───── Auth pages ──────────────────────────────────────────────────────────── */
 .nexo-auth-layout {
   min-height: 100vh;
   display: flex;
@@ -204,21 +181,4 @@
 .nexo-auth-card {
   width: 100%;
   max-width: 400px;
-}
-
-/* ─── Dark mode overrides ─────────────────────────────────────────────────── */
-[data-bs-theme="dark"] .nexo-sidebar {
-  background-color: #111920;
-}
-
-[data-bs-theme="dark"] .nexo-sidebar .nexo-board-item {
-  color: #a8baca;
-}
-
-[data-bs-theme="dark"] .nexo-sidebar .dropdown-menu {
-  --bs-dropdown-bg: #1a2535;
-}
-
-[data-bs-theme="dark"] .nexo-kanban-column {
-  background-color: var(--bs-secondary-bg);
 }

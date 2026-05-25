@@ -10,7 +10,7 @@ from nexo.services.category import CategoryService
 router = APIRouter(prefix="/api/v1", tags=["categories"])
 
 
-@router.get("/teams/{team_id}/categories", response_model=list[CategoryResponse])
+@router.get("/teams/{team_id}/categories")
 async def get_categories(
     team_id: str,
     user: User = Depends(get_current_user),
@@ -18,7 +18,10 @@ async def get_categories(
 ):
     svc = CategoryService(db)
     cats = svc.get_by_team(team_id)
-    return [CategoryResponse.model_validate(c, from_attributes=True) for c in cats]
+    return [
+        CategoryResponse.model_validate(c, from_attributes=True).model_dump(by_alias=True)
+        for c in cats
+    ]
 
 
 @router.post("/categories", response_model=CategoryResponse)

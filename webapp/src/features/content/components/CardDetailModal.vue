@@ -156,7 +156,8 @@ watch(() => props.cardId, loadCard);
 </script>
 
 <template>
-  <div class="modal fade show d-block" tabindex="-1" style="z-index:1055;" aria-modal="true" role="dialog" @click.self="emit('close')">
+  <Teleport to="#app-modal">
+    <div class="modal fade show d-block" tabindex="-1" style="z-index:1055;" aria-modal="true" role="dialog" @click.self="emit('close')">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 750px;">
       <div class="modal-content" style="min-height: 500px;">
 
@@ -315,4 +316,5 @@ watch(() => props.cardId, loadCard);
     <div aria-live="polite" class="visually-hidden">{{ liveMessage }}</div>
   </div>
   <div class="modal-backdrop fade show" style="z-index:1050;" @click="emit('close')"></div>
+  </Teleport>
 </template>

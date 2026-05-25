@@ -1,6 +1,7 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 
 from nexo.models.enums import CategoryType
 
@@ -21,15 +22,18 @@ class CategoryUpdate(BaseModel):
 
 
 class CategoryResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+    )
 
     id: str
     name: str
-    userID: str
-    teamID: str
+    user_id: str = Field(serialization_alias="userID")
+    team_id: str = Field(serialization_alias="teamID")
     type: str
-    collapsed: bool
-    sortOrder: int
-    createAt: int
-    updateAt: int
-    deleteAt: int
+    sort_order: int = Field(0, serialization_alias="sortOrder")
+    collapsed: bool = False
+    create_at: int = Field(serialization_alias="createAt")
+    update_at: int = Field(serialization_alias="updateAt")
+    delete_at: int = Field(serialization_alias="deleteAt")

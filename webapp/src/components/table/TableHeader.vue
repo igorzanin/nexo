@@ -10,11 +10,11 @@ defineProps<{
 <template>
   <thead>
     <tr>
-      <th class="sticky-top bg-white border-bottom px-2 py-2 small fw-semibold text-muted" style="min-width: 200px;">Title</th>
+      <th class="sticky-top bg-body border-bottom px-2 py-2 small fw-semibold text-muted" style="min-width: 200px;">Title</th>
       <th
         v-for="prop in properties.filter(p => visiblePropertyIds.includes(p.id))"
         :key="prop.id"
-        class="sticky-top bg-white border-bottom px-2 py-2 small fw-semibold text-muted text-truncate"
+        class="sticky-top bg-body border-bottom px-2 py-2 small fw-semibold text-muted text-truncate"
         style="min-width: 140px; max-width: 200px;"
       >
         {{ prop.name }}

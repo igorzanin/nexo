@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import type { Board, IPropertyTemplate } from "../../types/board";
 import type { BoardView } from "../../types/boardView";
 import ViewHeaderActionsMenu from "./ViewHeaderActionsMenu.vue";
@@ -40,8 +40,6 @@ const editingBoardTitle = ref(false);
 const editingViewTitle = ref(false);
 const editBoardTitle = ref("");
 const editViewTitle = ref("");
-const showViewMenu = ref(false);
-const showViewTypeMenu = ref(false);
 
 const viewTypes = ["board", "table", "calendar", "gallery"];
 
@@ -54,20 +52,10 @@ function startEditViewTitle() {
   editViewTitle.value = props.view.title || "";
   editingViewTitle.value = true;
 }
-
-function selectView(viewId: string) {
-  showViewMenu.value = false;
-  emit("switchView", viewId);
-}
-
-function selectViewType(viewType: string) {
-  showViewTypeMenu.value = false;
-  emit("switchViewType", viewType);
-}
 </script>
 
 <template>
-  <div class="view-header px-3 py-1 border-bottom bg-white">
+  <div class="view-header px-3 py-1 border-bottom bg-body">
     <div class="d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-3">
         <div class="d-flex align-items-center gap-2" style="min-width: 0;">
@@ -90,8 +78,8 @@ function selectViewType(viewType: string) {
 
         <div class="vr"></div>
 
-        <div class="position-relative">
-          <div class="d-flex align-items-center gap-1 cursor-pointer" @click="showViewMenu = !showViewMenu">
+        <div class="dropdown">
+          <div class="d-flex align-items-center gap-1 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
             <input
               v-if="editingViewTitle"
               v-model="editViewTitle"
@@ -108,26 +96,22 @@ function selectViewType(viewType: string) {
               <i class="bi bi-chevron-down ms-1" style="font-size: 10px;"></i>
             </span>
           </div>
-          <div v-if="showViewMenu" class="position-absolute start-0 mt-1 bg-white border rounded shadow-sm" style="z-index: 100; min-width: 180px;">
-            <div class="px-3 py-1 small fw-semibold text-muted border-bottom">Views</div>
-            <div v-for="v in views" :key="v.id">
+          <ul class="dropdown-menu">
+            <li><h6 class="dropdown-header">Views</h6></li>
+            <li v-for="v in views" :key="v.id">
               <button
-                class="dropdown-item small py-1 px-3 d-flex align-items-center justify-content-between"
-                :class="{ 'bg-primary bg-opacity-10': v.id === view.id }"
-                @click="selectView(v.id)"
+                class="dropdown-item d-flex align-items-center justify-content-between"
+                :class="{ 'active': v.id === view.id }"
+                @click="emit('switchView', v.id)"
               >
                 {{ v.title }}
-                <i v-if="v.id === view.id" class="bi bi-check text-primary"></i>
+                <i v-if="v.id === view.id" class="bi bi-check"></i>
               </button>
-            </div>
-            <hr class="my-1">
-            <button class="dropdown-item small py-1 px-3" @click="emit('addView'); showViewMenu = false">
-              <i class="bi bi-plus me-1"></i> Add view
-            </button>
-            <button v-if="views && views.length > 1" class="dropdown-item small py-1 px-3 text-danger" @click="emit('deleteView', view.id); showViewMenu = false">
-              <i class="bi bi-trash me-1"></i> Delete view
-            </button>
-          </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" @click="emit('addView')"><i class="bi bi-plus me-1"></i> Add view</button></li>
+            <li v-if="views && views.length > 1"><button class="dropdown-item text-danger" @click="emit('deleteView', view.id)"><i class="bi bi-trash me-1"></i> Delete view</button></li>
+          </ul>
         </div>
       </div>
 
@@ -156,34 +140,33 @@ function selectViewType(viewType: string) {
 
         <div class="vr mx-1"></div>
 
-        <div class="position-relative">
-          <button class="btn btn-sm btn-outline-secondary border-0" @click="showViewTypeMenu = !showViewTypeMenu">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary border-0 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi" :class="{
-              'bi-kanban': view.fields.viewType === 'board' || view.fields.viewType === 'kanban',
+              'bi-kanban': view.fields.viewType === 'board',
               'bi-table': view.fields.viewType === 'table',
               'bi-calendar3': view.fields.viewType === 'calendar',
               'bi-images': view.fields.viewType === 'gallery',
             }"></i>
             <span class="ms-1 small">{{ view.fields.viewType }}</span>
-            <i class="bi bi-chevron-down ms-1" style="font-size: 9px;"></i>
           </button>
-          <div v-if="showViewTypeMenu" class="position-absolute end-0 mt-1 bg-white border rounded shadow-sm" style="z-index: 100; min-width: 140px;">
-            <button
-              v-for="vt in viewTypes"
-              :key="vt"
-              class="dropdown-item small py-1 px-3 d-flex align-items-center gap-2"
-              :class="{ 'bg-primary bg-opacity-10': view.fields.viewType === vt }"
-              @click="selectViewType(vt)"
-            >
-              <i class="bi" :class="{
-                'bi-kanban': vt === 'board' || vt === 'kanban',
-                'bi-table': vt === 'table',
-                'bi-calendar3': vt === 'calendar',
-                'bi-images': vt === 'gallery',
-              }"></i>
-              {{ vt.charAt(0).toUpperCase() + vt.slice(1) }}
-            </button>
-          </div>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li v-for="vt in viewTypes" :key="vt">
+              <button
+                class="dropdown-item d-flex align-items-center gap-2"
+                :class="{ 'active': view.fields.viewType === vt }"
+                @click="emit('switchViewType', vt)"
+              >
+                <i class="bi" :class="{
+                  'bi-kanban': vt === 'board',
+                  'bi-table': vt === 'table',
+                  'bi-calendar3': vt === 'calendar',
+                  'bi-images': vt === 'gallery',
+                }"></i>
+                {{ vt.charAt(0).toUpperCase() + vt.slice(1) }}
+              </button>
+            </li>
+          </ul>
         </div>
 
         <button class="btn btn-sm btn-primary" @click="emit('addCard')">

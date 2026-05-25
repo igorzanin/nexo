@@ -64,12 +64,12 @@ function selectLanguage(language: "en" | "pt-BR" | "es") {
         </li>
         <li>
           <button type="button" class="dropdown-item" @click.stop="activePanel = 'theme'">
-            Set theme ▶
+            Set theme ›
           </button>
         </li>
         <li>
           <button type="button" class="dropdown-item" @click.stop="activePanel = 'language'">
-            Set language ▶
+            Set language ›
           </button>
         </li>
         <li><hr class="dropdown-divider" /></li>

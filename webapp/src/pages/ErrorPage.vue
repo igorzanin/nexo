@@ -35,7 +35,7 @@ const errorInfo = computed(() => errors[errorId.value] || {
 </script>
 
 <template>
-  <div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+  <div class="d-flex align-items-center justify-content-center vh-100 bg-body-secondary">
     <div class="text-center">
       <h2 class="mb-3">{{ errorInfo.title }}</h2>
       <p class="text-muted mb-4">{{ errorInfo.message }}</p>

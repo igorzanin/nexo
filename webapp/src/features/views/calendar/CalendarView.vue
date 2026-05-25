@@ -1,7 +1,7 @@
 <template>
   <div class="calendar-view d-flex flex-column h-100">
     <!-- Toolbar -->
-    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-light">
+    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-body-secondary">
       <button class="btn btn-sm btn-outline-secondary" @click="prevMonth">&lt;</button>
       <span class="fw-semibold">{{ monthLabel }}</span>
       <button class="btn btn-sm btn-outline-secondary" @click="nextMonth">&gt;</button>
@@ -34,7 +34,7 @@
           :key="cell.key"
           class="col border-bottom border-end p-1"
           style="min-height: 100px;"
-          :class="{ 'bg-light': !cell.currentMonth }"
+          :class="{ 'bg-body-tertiary': !cell.currentMonth }"
         >
           <div class="text-end small" :class="cell.isToday ? 'fw-bold text-primary' : 'text-muted'">{{ cell.day }}</div>
           <div class="d-flex flex-column gap-1 mt-1">

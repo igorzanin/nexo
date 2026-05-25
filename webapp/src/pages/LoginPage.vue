@@ -32,7 +32,7 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+  <div class="d-flex align-items-center justify-content-center vh-100 bg-body-secondary">
     <div class="card shadow" style="width: 400px;">
       <div class="card-body p-4">
         <h4 class="card-title text-center mb-4">Nexo</h4>

@@ -47,10 +47,11 @@ async def download_file(
     board_id: str,
     file_id: str,
     ext: str = "",
-    user: User = Depends(get_current_user),
 ):
     svc = FileService()
     data = svc.read_file(board_id, file_id, ext)
     if data is None:
         raise HTTPException(status_code=404, detail="File not found")
-    return Response(content=data, media_type="application/octet-stream")
+    import mimetypes
+    mime = mimetypes.guess_type(f"file.{ext}")[0] if ext else "application/octet-stream"
+    return Response(content=data, media_type=mime)

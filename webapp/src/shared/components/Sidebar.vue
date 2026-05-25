@@ -51,7 +51,7 @@ async function loadCategories(teamId: string) {
   try {
     await categoriesStore.fetchCategories(teamId);
   } catch {
-    // mantém sidebar utilizável mesmo sem categorias
+    // mant├®m sidebar utiliz├ível mesmo sem categorias
   }
 }
 

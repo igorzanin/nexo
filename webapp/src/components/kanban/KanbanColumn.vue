@@ -11,8 +11,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="kanban-column d-flex flex-column bg-light rounded border flex-grow-1">
-    <div class="kanban-column-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-white rounded-top">
+  <div class="kanban-column d-flex flex-column bg-body-secondary rounded border flex-grow-1">
+    <div class="kanban-column-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-body rounded-top">
       <div class="d-flex align-items-center gap-2">
         <button class="btn btn-sm p-0 border-0" @click="emit('toggleCollapse')">
           <i class="bi" :class="collapsed ? 'bi-chevron-right' : 'bi-chevron-down'" style="font-size: 10px;"></i>

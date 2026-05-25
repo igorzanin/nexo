@@ -30,7 +30,7 @@ const emit = defineEmits<{
             <h6 class="card-title small">{{ card.title || "Untitled" }}</h6>
             <p v-if="card.fields?.description" class="card-text small text-muted text-truncate">{{ card.fields.description }}</p>
             <div v-if="card.fields?.properties" class="mt-2 d-flex flex-wrap gap-1">
-              <span v-for="(val, key) in card.fields.properties" :key="key" v-if="val" class="badge bg-light text-muted fw-normal" style="font-size: 10px;">
+              <span v-for="(val, key) in card.fields.properties" :key="key" v-if="val" class="badge bg-secondary-subtle text-secondary fw-normal" style="font-size: 10px;">
                 {{ val }}
               </span>
             </div>

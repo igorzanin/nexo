@@ -70,6 +70,7 @@ onMounted(loadSharing);
 </script>
 
 <template>
+  <Teleport to="#app-modal">
   <div class="modal fade show d-block" tabindex="-1" style="z-index: 1055;" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
@@ -111,4 +112,5 @@ onMounted(loadSharing);
     </div>
   </div>
   <div class="modal-backdrop fade show" style="z-index: 1050;" @click="emit('close')"></div>
+  </Teleport>
 </template>

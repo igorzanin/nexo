@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     access_token_expire_days: int = 30
     refresh_token_expire_days: int = 60
     enable_public_shared_boards: bool = False
-    max_file_size: int = 102400
+    max_file_size: int = 10 * 1024 * 1024  # 10 MB
     # BR-MIGRAR-024: max body payload (bytes); default 10 MB
     max_payload_size: int = 10 * 1024 * 1024
     rate_limit_per_minute: int = 60

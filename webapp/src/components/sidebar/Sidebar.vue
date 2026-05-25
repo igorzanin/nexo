@@ -42,7 +42,7 @@ function handleChangeTeam() {
 </script>
 
 <template>
-  <aside class="sidebar d-flex flex-column bg-light border-end" style="width: 240px; height: 100vh;">
+  <aside class="sidebar d-flex flex-column bg-body-secondary border-end" style="width: 240px; height: 100vh;">
     <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
       <h6 class="mb-0 text-truncate">{{ teamStore.current?.title || "Nexo" }}</h6>
     </div>
