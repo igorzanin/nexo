@@ -15,7 +15,7 @@ export function useCalculations(cards: Block[], propertyId: string) {
   const avg = computed(() => (count.value > 0 ? sum.value / count.value : 0));
   const minValue = computed(() => values.value.length > 0 ? Math.min(...values.value.map((v) => Number(v) || 0)) : 0);
   const maxValue = computed(() => values.value.length > 0 ? Math.max(...values.value.map((v) => Number(v) || 0)) : 0);
-  const countChecked = computed(() => values.value.filter((v) => v === "true" || (v as unknown) === true).length);
+  const countChecked = computed(() => values.value.filter((v) => v === "true" || v === true).length);
   const percentChecked = computed(() => (count.value > 0 ? (countChecked.value / count.value) * 100 : 0));
 
   function calculate(type: CalculationType): number | string {

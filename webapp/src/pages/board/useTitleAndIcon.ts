@@ -1,4 +1,5 @@
 import { watch } from "vue";
+import type { BoardStore } from "../../stores/boardStore";
 
 export function useTitleAndIcon(boardStore: any) {
   watch(

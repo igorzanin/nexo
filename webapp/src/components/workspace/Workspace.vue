@@ -21,7 +21,7 @@ async function createBoard() {
   loading.value = true;
   error.value = "";
   try {
-    const board = await boardStore.createBoard({ teamId: teamStore.currentId, title: "New Board", type: "P" });
+    const board = await boardStore.createBoard({ team_id: teamStore.currentId, title: "New Board", type: "P" });
     router.push(`/board/${board.id}`);
   } catch (e: any) {
     error.value = e.response?.data?.detail || "Failed to create board";

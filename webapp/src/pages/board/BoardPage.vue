@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBoardStore, useViewStore, useCardStore, useTeamStore, useUserStore, useSidebarStore } from "../../stores";
 import { useWebSocket } from "../../composables/useWebSocket";
@@ -22,8 +22,9 @@ const ws = useWebSocket();
 useTitleAndIcon(boardStore);
 const { bind: bindUndoRedo, unbind: unbindUndoRedo } = useUndoRedo();
 
-async function init() {
+onMounted(async () => {
   const boardId = route.params.boardId as string;
+
   if (!teamStore.currentId) {
     await teamStore.fetchTeams();
     if (!teamStore.currentId) {
@@ -31,12 +32,19 @@ async function init() {
       await teamStore.fetchTeams();
     }
   }
+
   if (teamStore.currentId) {
     await Promise.all([
       boardStore.fetchBoards(teamStore.currentId),
       sidebarStore.fetchCategories(teamStore.currentId),
     ]);
   }
+
+  if (!boardId && boardStore.boardList.length > 0) {
+    router.replace(`/board/${boardStore.boardList[0].id}`);
+    return;
+  }
+
   if (boardId) {
     boardStore.current = boardId;
     await Promise.all([
@@ -47,20 +55,25 @@ async function init() {
     viewStore.updateFromBlocks(blocks.filter((b: any) => b.type === "view") as any);
     if (viewStore.viewList.length > 0 && !viewStore.current) {
       viewStore.current = viewStore.viewList[0].id;
+    } else if (viewStore.viewList.length === 0) {
+      try {
+        const defaultView = await api.createBlock(boardId, {
+          type: "view",
+          title: "Board view",
+          parentId: boardId,
+          boardId,
+          fields: { viewType: "board", cardOrder: [], visiblePropertyIds: [], sortOptions: [], groupById: "", filter: null },
+        } as any);
+        viewStore.setView(defaultView as any);
+        viewStore.current = defaultView.id;
+      } catch {
+        // silently fail
+      }
     }
-  } else if (boardStore.boardList.length > 0) {
-    router.replace(`/board/${boardStore.boardList[0].id}`);
   }
-}
 
-onMounted(() => {
-  init();
   if (token) ws.connect(token);
   bindUndoRedo();
-});
-
-watch(() => route.params.boardId, () => {
-  init();
 });
 
 onUnmounted(() => {

@@ -1,82 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { authGuard } from "../features/identity/composables/authGuard";
+
+function isAuthenticated(): boolean {
+  return !!localStorage.getItem("access_token");
+}
 
 const routes = [
   {
     path: "/login",
-    component: () => import("../features/identity/pages/LoginPage.vue"),
+    component: () => import("../pages/LoginPage.vue"),
   },
   {
     path: "/register",
-    component: () => import("../features/identity/pages/RegisterPage.vue"),
-  },
-  {
-    path: "/change-password",
-    component: () => import("../features/identity/pages/ChangePasswordPage.vue"),
-    meta: { requiresAuth: true },
+    component: () => import("../pages/RegisterPage.vue"),
   },
   {
     path: "/change_password",
-    redirect: "/change-password",
-  },
-  {
-    path: "/preferences",
-    component: () => import("../features/identity/pages/UserPreferencesPage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/settings",
-    redirect: "/preferences",
-  },
-  {
-    path: "/boards",
-    component: () => import("../features/boards/components/HomePage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/:boardId/members",
-    component: () => import("../features/boards/pages/BoardMembersPage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/templates",
-    component: () => import("../features/boards/pages/BoardTemplatesPage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/teams/:teamId/categories",
-    component: () => import("../features/boards/pages/CategoryManagerPage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/teams/:teamId/settings",
-    component: () => import("../features/boards/pages/TeamSettingsPage.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/:boardId/table",
-    component: () => import("../features/views/table/components/BoardTableView.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/:boardId/kanban",
-    component: () => import("../features/views/kanban/components/BoardKanbanView.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/:boardId/gallery",
-    component: () => import("../features/views/gallery/GalleryView.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/boards/:boardId/calendar",
-    component: () => import("../features/views/calendar/CalendarView.vue"),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/board/:boardId",
-    redirect: (to: any) => `/boards/${String(to.params.boardId)}/kanban`,
-    meta: { requiresAuth: true },
+    component: () => import("../pages/ChangePasswordPage.vue"),
   },
   {
     path: "/error",
@@ -103,8 +42,13 @@ const routes = [
     meta: { readonly: true },
   },
   {
+    path: "/welcome",
+    component: () => import("../pages/WelcomePage.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/:pathMatch(.*)*",
-    redirect: "/boards",
+    redirect: "/board",
   },
 ];
 
@@ -113,7 +57,10 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(authGuard);
+router.beforeEach((to, _from) => {
+  if (to.meta.requiresAuth && !isAuthenticated()) {
+    return `/login?r=${encodeURIComponent(to.fullPath)}`;
+  }
+});
 
 export default router;
-

@@ -12,6 +12,20 @@ function toSnake(obj: Record<string, unknown>): Record<string, unknown> {
   }
   return result;
 }
+
+function toCamel(obj: unknown): unknown {
+  if (Array.isArray(obj)) return obj.map(toCamel);
+  if (obj !== null && typeof obj === "object") {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+      result[camelKey] = toCamel(value);
+    }
+    return result;
+  }
+  return obj;
+}
+
 import type { IUser } from "../types/user";
 import type { ITeam } from "../types/team";
 import type { ISharing } from "../types/sharing";
@@ -29,32 +43,32 @@ export async function register(username: string, email: string, password: string
 
 export async function getTeams(): Promise<ITeam[]> {
   const res = await api.get("/teams");
-  return res.data;
+  return toCamel(res.data) as ITeam[];
 }
 
 export async function createTeam(title: string): Promise<ITeam> {
   const res = await api.post("/teams", { title, signupToken: "" });
-  return res.data;
+  return toCamel(res.data) as ITeam;
 }
 
 export async function getBoards(teamId: string): Promise<Board[]> {
   const res = await api.get(`/teams/${teamId}/boards`);
-  return res.data;
+  return toCamel(res.data) as Board[];
 }
 
 export async function getBoard(boardId: string): Promise<Board> {
   const res = await api.get(`/boards/${boardId}`);
-  return res.data;
+  return toCamel(res.data) as Board;
 }
 
 export async function createBoard(data: Partial<Board>): Promise<Board> {
   const res = await api.post("/boards", toSnake(data as any));
-  return res.data;
+  return toCamel(res.data) as Board;
 }
 
 export async function patchBoard(boardId: string, data: BoardPatch): Promise<Board> {
   const res = await api.patch(`/boards/${boardId}`, toSnake(data as any));
-  return res.data;
+  return toCamel(res.data) as Board;
 }
 
 export async function deleteBoard(boardId: string): Promise<void> {
@@ -63,22 +77,22 @@ export async function deleteBoard(boardId: string): Promise<void> {
 
 export async function duplicateBoard(boardId: string): Promise<Board> {
   const res = await api.post(`/boards/${boardId}/duplicate`);
-  return res.data;
+  return toCamel(res.data) as Board;
 }
 
 export async function getBlocks(boardId: string): Promise<Block[]> {
   const res = await api.get(`/boards/${boardId}/blocks`);
-  return res.data;
+  return toCamel(res.data) as Block[];
 }
 
 export async function createBlock(boardId: string, data: Partial<Block>): Promise<Block> {
   const res = await api.post(`/boards/${boardId}/blocks`, toSnake(data as any));
-  return res.data;
+  return toCamel(res.data) as Block;
 }
 
 export async function patchBlock(boardId: string, blockId: string, data: BlockPatch): Promise<Block> {
   const res = await api.patch(`/boards/${boardId}/blocks/${blockId}`, toSnake(data as any));
-  return res.data;
+  return toCamel(res.data) as Block;
 }
 
 export async function deleteBlock(boardId: string, blockId: string): Promise<void> {
@@ -87,46 +101,54 @@ export async function deleteBlock(boardId: string, blockId: string): Promise<voi
 
 export async function getCards(boardId: string): Promise<Block[]> {
   const res = await api.get(`/boards/${boardId}/cards`);
-  return res.data;
+  return toCamel(res.data) as Block[];
 }
 
 export async function createCard(boardId: string, data: Partial<Block>): Promise<Block> {
   const res = await api.post(`/boards/${boardId}/cards`, toSnake(data as any));
-  return res.data;
+  return toCamel(res.data) as Block;
 }
 
 export async function getMembers(boardId: string): Promise<BoardMember[]> {
   const res = await api.get(`/boards/${boardId}/members`);
-  return res.data;
+  return toCamel(res.data) as BoardMember[];
+}
+
+export async function createCategory(teamId: string, name: string): Promise<Category> {
+  const res = await api.post(`/teams/${teamId}/categories`, { name });
+  return toCamel(res.data) as Category;
+}
+
+export async function renameCategory(categoryId: string, name: string): Promise<void> {
+  await api.patch(`/categories/${categoryId}`, { name });
+}
+
+export async function deleteCategory(categoryId: string): Promise<void> {
+  await api.delete(`/categories/${categoryId}`);
 }
 
 export async function getCategories(teamId: string): Promise<Category[]> {
   const res = await api.get(`/teams/${teamId}/categories`);
-  return res.data;
+  return toCamel(res.data) as Category[];
 }
 
 export async function getSharing(boardId: string): Promise<ISharing> {
   const res = await api.get(`/boards/${boardId}/sharing`);
-  return res.data;
+  return toCamel(res.data) as ISharing;
 }
 
 export async function postSharing(boardId: string, data: { enabled: boolean; token: string }): Promise<ISharing> {
   const res = await api.post(`/boards/${boardId}/sharing`, data);
-  return res.data;
+  return toCamel(res.data) as ISharing;
 }
 
 export async function getSubscriptions(subscriberId: string): Promise<Subscription[]> {
   const res = await api.get(`/subscriptions/${subscriberId}`);
-  return res.data;
+  return toCamel(res.data) as Subscription[];
 }
 
-export async function subscribeBlock(blockId: string, subscriberId: string): Promise<Subscription> {
-  const res = await api.post("/subscriptions", { block_id: blockId, subscriber_id: subscriberId, subscriber_type: "user" });
-  return res.data;
-}
-
-export async function unsubscribeBlock(blockId: string, subscriberId: string): Promise<void> {
-  await api.delete(`/subscriptions/${blockId}/${subscriberId}`);
+export async function patchUserConfig(userId: string, config: Record<string, unknown>): Promise<void> {
+  await api.patch(`/users/${userId}/config`, config);
 }
 
 export async function changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {

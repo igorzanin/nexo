@@ -32,6 +32,13 @@ export const useUserStore = defineStore("users", () => {
     boardUsers.value[user.id] = user;
   }
 
+  async function updateMyConfig(config: Record<string, unknown>) {
+    myConfig.value = { ...myConfig.value, ...config };
+    if (me.value?.id) {
+      await api.patchUserConfig(me.value.id, config).catch(() => {});
+    }
+  }
+
   async function fetchSubscriptions(subscriberId: string) {
     const data = await api.getSubscriptions(subscriberId);
     blockSubscriptions.value = data;
@@ -40,6 +47,6 @@ export const useUserStore = defineStore("users", () => {
   return {
     me, boardUsers, loggedIn, blockSubscriptions, myConfig,
     isLoggedIn, hasBoardUsers,
-    setMe, clearMe, addBoardUser, fetchSubscriptions,
+    setMe, clearMe, addBoardUser, updateMyConfig, fetchSubscriptions,
   };
 });

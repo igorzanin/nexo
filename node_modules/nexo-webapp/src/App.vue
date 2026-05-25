@@ -4,6 +4,6 @@ import FlashMessages from "./components/flash/FlashMessages.vue";
 </script>
 
 <template>
-  <RouterView />
+  <RouterView :key="$route.fullPath" />
   <FlashMessages />
 </template>

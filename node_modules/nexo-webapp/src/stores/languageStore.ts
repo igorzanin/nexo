@@ -2,9 +2,9 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useLanguageStore = defineStore("language", () => {
-  const value = ref<"en" | "pt-BR" | "es">(navigator.language?.startsWith("pt") ? "pt-BR" : "en");
+  const value = ref(navigator.language?.startsWith("pt") ? "pt" : "en");
 
-  function setLanguage(lang: "en" | "pt-BR" | "es") {
+  function setLanguage(lang: string) {
     value.value = lang;
   }
 
